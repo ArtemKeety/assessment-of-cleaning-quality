@@ -1,0 +1,5 @@
+
+
+
+HTTP_ONLY = True
+SECURE_CONNECTION = False
