@@ -51,7 +51,7 @@ def choice_type(path: str)-> str:
 models = [
         "google/gemma-3-27b-it:free", # + 0 rate/limit
         "google/gemini-2.0-flash-exp:free", # +/- 1 large timeout and rateLimiter
-        'openrouter/bert-nebulon-alpha', # +/- 2 / last Error
+        'openrouter/bert-nebulon-alpha', # -/+ 2 / last Error
         "nvidia/nemotron-nano-12b-v2-vl:free", # + 3
     ]
 
