@@ -49,16 +49,10 @@ def choice_type(path: str)-> str:
             return "image/jpeg"
 
 models = [
-        "qwen/qwen2-vl-72b-instruct:free", #- 0
-        "google/gemini-flash-1.5:free", # - 1
-        "openai/gpt-4o-mini:free", # - 2
-        "google/gemma-3-27b-it:free", # - 3
-        "anthropic/claude-3-haiku:free", # - 4
-        "google/gemini-2.0-flash-exp:free", # -/+ 5 large timeout
-        'mistralai/mistral-small-3.1-24b-instruct:free', # - 6
-        'google/gemini-pro-1.5', # - 7
-        'openrouter/bert-nebulon-alpha', # + 8
-        "nvidia/nemotron-nano-12b-v2-vl:free", #+ 9
+        "google/gemma-3-27b-it:free", # + 0 rate/limit
+        "google/gemini-2.0-flash-exp:free", # +/- 1 large timeout and rateLimiter
+        'openrouter/bert-nebulon-alpha', # +/- 2 / last Error
+        "nvidia/nemotron-nano-12b-v2-vl:free", # + 3
     ]
 
 
@@ -78,7 +72,7 @@ def create_comment(s: requests.Session, clear: str, dirty: str):
             "Content-Type": "application/json",
         },
         data=orjson.dumps({
-            "model": models[8],
+            "model": models[1],
             "messages": [
                 {
                     "role": "user", #"system", #"user",
@@ -86,21 +80,12 @@ def create_comment(s: requests.Session, clear: str, dirty: str):
                         {
                             "type": "text",
                             "text": (
-                                # "Ты ассистент для оценки чистоты квартир."
-                                # "У тебя есть ДВЕ фотографии:"
-                                # "- первое фото — чистая квартира (эталон);"
-                                # "- второе фото — оцениваемая квартира."
-                                # "Отвечай ТОЛЬКО по шаблону ниже, на русском языке."
-                                # "БЕЗ любых вступлений, пояснений, обращений и переводов строк."
-                                # "Формат ответа СТРОГО один:"
-                                # "Недостатки: [список через запятую]. Оценка: [число от 1 до 10]."
-                                # "Рекомендации: [текст не более 100 символов]."
                                 """
                                 Ты ассистент для оценки чистоты квартир.
                                 У тебя есть ДВЕ фотографии:
                                 — первое фото — чистая квартира (эталон);
                                 — второе фото — оцениваемая квартира.
-                                Если изображения по теме НЕ совпадают 
+                                Если изображения по теме НЕ совпадают
                                 (например, одно не является квартирой или предметы/обстановка принципиально разные),
                                 отвечай строго так:"Недостатки: невозможно оценить — несоответствие изображений.
                                 Оценка: 0. Рекомендации: загрузите корректные фото."
@@ -163,3 +148,4 @@ if __name__ == "__main__":
     session = requests.Session()
     for c, d in photos:
         n = create_comment(session, c, d)
+        print(n)
