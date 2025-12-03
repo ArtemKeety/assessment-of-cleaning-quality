@@ -4,8 +4,6 @@ from PIL import Image, ImageChops
 from skimage.metrics import structural_similarity
 
 
-
-
 __pathBase = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")), "static")
 __path = os.path.join(__pathBase, "report")
 
@@ -22,7 +20,6 @@ def create_image_old(clear_path: str, dirty_path: str)-> str:
         dirty_image.save(path)
 
     return os.path.basename(path)
-
 
 
 def create_image(clear_path: str, dirty_path: str) -> str:
@@ -50,7 +47,7 @@ def create_image(clear_path: str, dirty_path: str) -> str:
     #cv2.imshow('after', after)
     cv2.imwrite(path, after)
     #cv2.waitKey()
-    return path
+    return os.path.basename(path)
 
 
 
