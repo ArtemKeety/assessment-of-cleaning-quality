@@ -21,19 +21,6 @@ async def add(
 ):
     return await ReportService.add(flat_id, photos, conn)
 
-@router.post(
-    "/add-background",
-    response_model=int,
-    dependencies=[Depends(user_identy), Depends(RateLimiter(times=6, minutes=1))]
-)
-async def add_v2(
-        flat_id: int,
-        background: BackgroundTasks,
-        photos: list[UploadFile]=Depends(valid_files),
-        conn: asyncpg.Connection = Depends(DataBase.from_request_conn),
-):
-    return await ReportService.add_v2(flat_id, photos, conn, background)
-
 
 @router.get(
     "/all",
