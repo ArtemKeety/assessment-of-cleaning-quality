@@ -29,7 +29,7 @@ class ReportService:
 
         time = datetime.now().astimezone(ZoneInfo("UTC")).replace(tzinfo=None)
 
-        report_id = await ReportRepo.add_report_place(flat_id,"default.gif", time, conn)
+        report_id = await ReportRepo.add_report_place(flat_id, photos[0].filename, time, conn)
 
         dirty_photos = [obj.filename for obj in photos]
 

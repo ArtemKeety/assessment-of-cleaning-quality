@@ -26,8 +26,8 @@ def custom_retry(count:int, max_times: int):
                     LOGGER.error(f"{type(e).__name__}: {e}")
                     times = (i+1) * chunk
                     time.sleep(times)
-            #raise Exception(error)
-            return "не удалось чётко распознать фотографию, все минусы выделены на фото"
+            raise requests.RequestException(f"{type(error).__name__}: {error}")
+            #return "не удалось чётко распознать фотографию, все минусы выделены на фото"
         return wrapper
     return decorator
 
@@ -48,19 +48,19 @@ def choice_type(path: str)-> str:
         case _:
             return "image/jpeg"
 
-models = [
+models = (
         "google/gemma-3-27b-it:free", # +/- 0 rate/limit
-        'x-ai/grok-4.1-fast:free'  # +\- 1
+        'x-ai/grok-4.1-fast:free',  # +\- 1 (403 error)
         "nvidia/nemotron-nano-12b-v2-vl:free",  # + 2
         "google/gemini-2.0-flash-exp:free", # +/- 3 large timeout and rateLimiter
         'openrouter/bert-nebulon-alpha', # -/+ 4 / last Error
         "mistralai/mistral-small-3.1-24b-instruct:free", # 5
         'google/gemma-3-4b-it:free', # 6
         'google/gemma-3-12b-it:free', # 7
-    ]
+)
 
 
-@custom_retry(count=5, max_times=120)
+@custom_retry(count=5, max_times=60)
 def create_comment(s: requests.Session, clear: str, dirty: str):
 
     clear_image: base64.b64encode = encoding_file(clear)
@@ -76,7 +76,7 @@ def create_comment(s: requests.Session, clear: str, dirty: str):
             "Content-Type": "application/json",
         },
         data=orjson.dumps({
-            "model": models[2],
+            "model": models[1],
             "messages": [
                 {
                     "role": "user", #"system", #"user",
