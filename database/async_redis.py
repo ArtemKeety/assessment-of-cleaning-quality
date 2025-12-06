@@ -4,7 +4,7 @@ from fastapi import Request
 import redis.asyncio as redis
 from customlogger import LOGGER
 from configuration import LIFE_TIME, RedisConfig
-
+from contextlib import asynccontextmanager
 
 class RedisDb:
 
@@ -19,11 +19,11 @@ class RedisDb:
             max_connections=RedisConfig.max_connections,
         )
 
-    async def add(self, key: str, value: dict):
-        await self.__client.set(key, orjson.dumps(value), ex=LIFE_TIME)
+    async def add(self, key: str, value: dict, exp: int = LIFE_TIME):
+        await self.__client.set(key, orjson.dumps(value), ex=exp)
 
-    async def new_expire(self, key: str):
-        await self.__client.expire(key, LIFE_TIME)
+    async def new_expire(self, key: str, exp: int = LIFE_TIME):
+        await self.__client.expire(key, time=exp)
 
     async def delete(self, key: str):
         await self.__client.delete(key)
@@ -44,4 +44,9 @@ class RedisDb:
     @staticmethod
     async def from_request_conn(request: Request) -> 'RedisDb':
         return request.app.state.redis_pool
+
+    @asynccontextmanager
+    async def pipeLine(self, transaction: bool=False):
+        async with self.__client.pipeline(transaction=transaction) as pipe:
+            yield pipe
 

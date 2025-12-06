@@ -4,11 +4,11 @@ import asyncpg
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from utils import download_files
+from tasks import request_from_ai
 from repo import ReportRepo, FlatRepo
 from midleware import CustomHTTPException
 from shemas import FullFlat, Report, ReportPath
 from fastapi import UploadFile, BackgroundTasks
-from tasks import request_from_ai, request_from_aiV2
 from configuration import RAW_REPORT_FILE_PATH, FLAT_FILE_PATH
 
 

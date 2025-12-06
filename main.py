@@ -1,6 +1,7 @@
 import os
 import asyncpg
 import logging
+
 from router import *
 from fastapi import Depends
 from fastapi import FastAPI
@@ -12,6 +13,7 @@ from granian.constants import Interfaces
 from contextlib import asynccontextmanager
 from fastapi_limiter import FastAPILimiter
 from fastapi.staticfiles import StaticFiles
+from fastapi_limiter.depends import RateLimiter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
 from configuration import TIMEOUT, FLAT_FILE_PATH, REPORT_FILE_PATH, RedisConfig, RAW_REPORT_FILE_PATH
@@ -45,6 +47,7 @@ app = FastAPI(
     docs_url=None,
     openapi_url=None,
     redoc_url=None,
+    dependencies=[Depends(RateLimiter(times=60, seconds=60))],
 )
 
 origins = (

@@ -11,7 +11,7 @@ from configuration import LIFE_TIME, HTTP_ONLY, SECURE_CONNECTION
 router = APIRouter(prefix="/user")
 
 
-@router.post("/sign-up", response_model=Session)
+@router.post("/sign-up", response_model=Session, dependencies=[Depends(RateLimiter(times=1, seconds=1))])
 async def sign_up(
         r: UserRegister,
         res: Response,
@@ -30,7 +30,7 @@ async def sign_up(
     )
     return s
 
-@router.post("/sign-in", response_model=Session)
+@router.post("/sign-in", response_model=Session, dependencies=[Depends(RateLimiter(times=1, seconds=1))])
 async def sign_in(
         u: UserLogin,
         res: Response,
@@ -49,7 +49,7 @@ async def sign_in(
     )
     return s
 
-@router.post("/logout", dependencies=[Depends(RateLimiter(times=6, minutes=1))])
+@router.post("/logout", dependencies=[Depends(RateLimiter(times=1, seconds=1))])
 async def logout(
         res: Response,
         redis: RedisDb = Depends(RedisDb.from_request_conn),
@@ -60,7 +60,7 @@ async def logout(
     return {"message": "success"}
 
 
-@router.delete("/delete", dependencies=[Depends(RateLimiter(times=6, minutes=1))])
+@router.delete("/delete", dependencies=[Depends(RateLimiter(times=1, seconds=1))])
 async def delete(
         res: Response,
         redis: RedisDb = Depends(RedisDb.from_request_conn),

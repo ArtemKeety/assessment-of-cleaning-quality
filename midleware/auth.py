@@ -39,7 +39,15 @@ async def user_identy(request: Request, response: Response, credentials: HTTPAut
         secure=SECURE_CONNECTION,
     )
 
+    request.state.user_id = data.get("user_id")
+
     return data
+
+
+
+
+
+
 
 
 
