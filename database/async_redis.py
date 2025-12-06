@@ -3,8 +3,10 @@ from typing import Optional
 from fastapi import Request
 import redis.asyncio as redis
 from customlogger import LOGGER
-from configuration import LIFE_TIME, RedisConfig
+from redis.asyncio.client import Pipeline
 from contextlib import asynccontextmanager
+from configuration import LIFE_TIME, RedisConfig
+
 
 class RedisDb:
 
@@ -46,7 +48,7 @@ class RedisDb:
         return request.app.state.redis_pool
 
     @asynccontextmanager
-    async def pipeLine(self, transaction: bool=False):
+    async def pipeLine(self, transaction: bool=False)-> Pipeline:
         async with self.__client.pipeline(transaction=transaction) as pipe:
             yield pipe
 
