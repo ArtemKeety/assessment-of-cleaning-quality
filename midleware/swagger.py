@@ -13,7 +13,7 @@ password = os.getenv("swagger_pass")
 security = HTTPBasic()
 
 
-def auth(c: HTTPBasicCredentials = Depends(security)):
+def swagger_auth(c: HTTPBasicCredentials = Depends(security)):
     if not c:
         raise CustomHTTPException(status_code=401, detail="Invalid credentials for swagger")
 

@@ -1,7 +1,6 @@
 import os
 import asyncpg
 import logging
-
 from router import *
 from fastapi import Depends
 from fastapi import FastAPI
@@ -17,15 +16,14 @@ from fastapi_limiter.depends import RateLimiter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
 from configuration import TIMEOUT, FLAT_FILE_PATH, REPORT_FILE_PATH, RedisConfig, RAW_REPORT_FILE_PATH
-from midleware import CustomHTTPException, ErrorHandler, LogMiddleware, TimeoutMiddleware, user_address, auth
+from midleware import CustomHTTPException, ErrorHandler, LogMiddleware, TimeoutMiddleware, user_address, swagger_auth
 
 LOGGER.setLevel(logging.DEBUG)
 
 @asynccontextmanager
 async def lifespan(fastapi: FastAPI):
-    os.makedirs(FLAT_FILE_PATH, exist_ok=True)
-    os.makedirs(RAW_REPORT_FILE_PATH, exist_ok=True)
-    os.makedirs(REPORT_FILE_PATH, exist_ok=True)
+    for path in FLAT_FILE_PATH, REPORT_FILE_PATH, RAW_REPORT_FILE_PATH:
+        os.makedirs(path, exist_ok=True)
     LOGGER.warning("Starting lifespan")
     fastapi.state.db_pool = await DataBase.connect()
     fastapi.state.redis_pool = RedisDb()
@@ -74,11 +72,11 @@ app.include_router(report_router, prefix="/api/v1", tags=["report"])
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-@app.get('/docs', include_in_schema=False, dependencies=[Depends(auth)])
+@app.get('/docs', include_in_schema=False, dependencies=[Depends(swagger_auth)])
 async def docs():
     return get_swagger_ui_html(openapi_url="/openapi.json", title=app.title)
 
-@app.get('/openapi.json', include_in_schema=False, dependencies=[Depends(auth)])
+@app.get('/openapi.json', include_in_schema=False, dependencies=[Depends(swagger_auth)])
 async def openapi():
     return app.openapi()
 
