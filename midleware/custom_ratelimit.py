@@ -14,9 +14,8 @@ class CustomRateLimit:
         self.__count = count
 
     async def __call__(self, r: Request, user_data = Depends(user_identy)) -> Any:
-        user_id = r.state.user_id
         redis: RedisDb = r.app.state.redis_pool
-        user_key = f"user_id:{user_id}"
+        user_key = f"user_id:{r.state.user_id}"
         async with redis.pipeLine(transaction=True) as pipe:
             pipe.set(user_key, 0, nx=True, ex=self.__times)
             pipe.incr(user_key)
