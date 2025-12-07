@@ -60,7 +60,7 @@ async def logout(
     return {"message": "success"}
 
 
-@router.delete("/delete")
+@router.delete("/delete", response_model=int)
 async def delete(
         res: Response,
         redis: RedisDb = Depends(RedisDb.from_request_conn),
