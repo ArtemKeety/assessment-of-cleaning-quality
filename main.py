@@ -15,6 +15,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi_limiter.depends import RateLimiter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
+from fastapi.exceptions import RequestValidationError
 from configuration import TIMEOUT, FLAT_FILE_PATH, REPORT_FILE_PATH, RedisConfig, RAW_REPORT_FILE_PATH
 from midleware import CustomHTTPException, ErrorHandler, LogMiddleware, TimeoutMiddleware, user_address, swagger_auth
 
@@ -66,6 +67,7 @@ app.add_middleware(TimeoutMiddleware, TIMEOUT)
 
 app.add_exception_handler(CustomHTTPException, ErrorHandler.CustomHTTPException)
 app.add_exception_handler(asyncpg.UniqueViolationError, ErrorHandler.UniqueViolationError)
+app.add_exception_handler(RequestValidationError, ErrorHandler.PydenticValidationError)
 
 app.include_router(user_router, prefix="/api/v1", tags=["user"])
 app.include_router(flat_router, prefix="/api/v1", tags=["flat"])

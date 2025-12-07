@@ -1,5 +1,6 @@
 from .base import Base
-from pydantic import model_validator, Field, ValidationError
+from midleware import CustomHTTPException
+from pydantic import model_validator, Field
 
 
 class UserLogin(Base):
@@ -20,7 +21,7 @@ class UserRegister(UserLogin):
     @model_validator(mode='after')
     def verify(self) -> 'UserRegister':
         if self.password != self.confirm:
-            raise ValidationError('Passwords do not equal')
+            raise CustomHTTPException(detail='Passwords do not equal', status_code=400)
         return self
 
 
