@@ -1,9 +1,10 @@
 
 from database import RedisDb
 from .auth import user_identy
-from fastapi import Depends, Request
+from fastapi import Depends, Request, Response
 from .error import CustomHTTPException
 from typing import Callable, Any
+from fastapi_limiter.depends import RateLimiter
 
 
 class CustomRateLimit:
@@ -13,18 +14,13 @@ class CustomRateLimit:
         self.__times: int = sec + minute * 60 + hour * 3600 + day * 86400
         self.__count = count
 
-    async def __call__(self, r: Request, user_data = Depends(user_identy)) -> Any:
-        redis: RedisDb = r.app.state.redis_pool
-        user_key = f"user_id:{r.state.user_id}"
-        async with redis.pipeLine(transaction=True) as pipe:
-            pipe.set(user_key, 0, nx=True, ex=self.__times)
-            pipe.incr(user_key)
-            result = await pipe.execute()
+    @staticmethod
+    async def __get_user_id(r: Request):
+        return f"user_id:{r.state.user_id}"
 
-        user_count =  result[1]
-        if user_count > self.__count:
-            raise CustomHTTPException(status_code=429, detail="Too many requests")
-
+    async def __call__(self, r: Request, res: Response, user_data = Depends(user_identy)) -> Any:
+        limit = RateLimiter(times=self.__count, seconds=self.__times, identifier=self.__get_user_id)
+        await limit(request=r, response=res)
         return user_data
 
 
