@@ -1,9 +1,6 @@
-
-from database import RedisDb
+from typing import Any
 from .auth import user_identy
 from fastapi import Depends, Request, Response
-from .error import CustomHTTPException
-from typing import Callable, Any
 from fastapi_limiter.depends import RateLimiter
 
 
