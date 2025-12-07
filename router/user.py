@@ -70,3 +70,8 @@ async def delete(
     await redis.delete(user_data.get('session'))
     res.delete_cookie('session')
     return await UserService.del_user(user_data.get('user_id'), conn=conn)
+
+
+@router.get("/check-auth", dependencies=[Depends(user_identy)], include_in_schema=False)
+async def check_auth():
+    return {"message": "success"}
