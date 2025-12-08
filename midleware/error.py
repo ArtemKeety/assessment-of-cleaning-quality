@@ -1,3 +1,4 @@
+from customlogger import LOGGER
 from pydantic import ValidationError
 from fastapi import HTTPException, Request
 from fastapi.responses import JSONResponse
@@ -35,6 +36,17 @@ class ErrorHandler:
         return JSONResponse(
             status_code=400,
             content={"message": msg},
+        )
+
+    @staticmethod
+    async def ConnectionError(request: Request, exception: ConnectionError):
+        LOGGER.error(f"{type(exception).__name__}:{exception}")
+        return JSONResponse(
+            status_code=500,
+            content={
+                "message": "connection error",
+                "error": f"{type(exception).__name__}:{exception}"
+            }
         )
 
 
