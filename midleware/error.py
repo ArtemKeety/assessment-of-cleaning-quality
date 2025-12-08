@@ -31,7 +31,7 @@ class ErrorHandler:
     @staticmethod
     async def PydenticValidationError(request: Request, exception: ValidationError):
         errors = exception.errors()
-        msg = [f"{error.get("loc", [0])[-1]}: {error.get("msg", "")}" for error in errors]
+        msg = [f"{error.get("loc", [0])[-1]}: {error.get("msg", "")}\n" for error in errors]
         return JSONResponse(
             status_code=400,
             content={"message": msg},
