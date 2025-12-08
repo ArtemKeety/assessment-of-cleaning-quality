@@ -10,7 +10,7 @@ from midleware import CustomHTTPException
 class FlatService:
 
     @staticmethod
-    async def add(name: str, user_id: int, photos: list[UploadFile], conn: asyncpg.Connection) -> int:
+    async def add(name: str, user_id: int, photos: list[UploadFile], conn: asyncpg.Connection) -> Flat:
 
         download_task = asyncio.create_task(download_files(photos, FLAT_FILE_PATH))
 
@@ -23,7 +23,7 @@ class FlatService:
 
         await download_task
 
-        return flat_id
+        return Flat(id=flat_id, name=name, preview=photos[0].filename)
 
     @staticmethod
     async def all(user_id: int, conn: asyncpg.Connection) -> list[Flat]:

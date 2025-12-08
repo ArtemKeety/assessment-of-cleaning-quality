@@ -76,7 +76,7 @@ def create_comment(s: requests.Session, clear: str, dirty: str):
             "Content-Type": "application/json",
         },
         data=orjson.dumps({
-            "model": models[1],
+            "model": models[2],
             "messages": [
                 {
                     "role": "user", #"system", #"user",

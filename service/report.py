@@ -1,22 +1,22 @@
-import os
+
 import asyncio
 import asyncpg
 from datetime import datetime
 from zoneinfo import ZoneInfo
+from fastapi import UploadFile
 from utils import download_files
 from tasks import request_from_ai
+from shemas import Report, ReportPath
 from repo import ReportRepo, FlatRepo
 from midleware import CustomHTTPException
-from shemas import FullFlat, Report, ReportPath
-from fastapi import UploadFile, BackgroundTasks
-from configuration import RAW_REPORT_FILE_PATH, FLAT_FILE_PATH
+from configuration import RAW_REPORT_FILE_PATH
 
 
 
 class ReportService:
 
     @staticmethod
-    async def add(flat_id: int, photos: list[UploadFile], conn: asyncpg.Connection) -> int:
+    async def add(flat_id: int, photos: list[UploadFile], conn: asyncpg.Connection) -> Report:
 
         db_photo = await FlatRepo.get_id(flat_id, conn)
 
@@ -48,7 +48,7 @@ class ReportService:
 
         request_from_ai.delay(report_id, dirty_photos, clear_photos)
 
-        return report_id
+        return Report(id=report_id, flat_id=flat_id, preview=photos[0].filename, date=time)
 
     @staticmethod
     async def get_reports(user_id: int, conn: asyncpg.Connection) -> list[Report]:

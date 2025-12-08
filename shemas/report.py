@@ -1,13 +1,12 @@
 from .base import Base
 from datetime import datetime
 
-class BaseReport(Base):
+
+class Report(Base):
+    id: int
     flat_id: int
     preview: str
     date: datetime
-
-class Report(BaseReport):
-    id: int
 
 
 class ReportPath(Base):
