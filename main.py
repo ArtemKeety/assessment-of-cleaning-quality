@@ -16,7 +16,7 @@ from fastapi_limiter.depends import RateLimiter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.exceptions import RequestValidationError
-from configuration import TIMEOUT, FLAT_FILE_PATH, REPORT_FILE_PATH, RedisConfig, RAW_REPORT_FILE_PATH
+from configuration import TIMEOUT, FLAT_FILE_PATH, REPORT_FILE_PATH, RedisConfig, RAW_REPORT_FILE_PATH, WORKERS
 from midleware import CustomHTTPException, ErrorHandler, LogMiddleware, TimeoutMiddleware, user_address, swagger_auth
 
 LOGGER.setLevel(logging.DEBUG)
@@ -89,7 +89,7 @@ if __name__ == '__main__':
     server = Granian(
         target="main:app",
         interface=Interfaces.ASGI,
-        workers=1,
+        workers=WORKERS,
         runtime_threads=8,
         address="0.0.0.0",
         port=8000,

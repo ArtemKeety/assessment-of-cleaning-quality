@@ -1,4 +1,5 @@
 import os
+import sys
 
 from dotenv import load_dotenv
 
@@ -8,3 +9,5 @@ MAX_CONNECTIONS = int(os.getenv('MAX_CONNECTIONS'))
 MIN_CONNECTIONS = int(os.getenv('MIN_CONNECTIONS'))
 LIFE_TIME = int(os.getenv('LIFE_TIME'))
 TIMEOUT = int(os.getenv('TIMEOUT'))
+WORKERS = int(os.getenv('WORKERS')) if not sys.platform.startswith('win') else 1
+
