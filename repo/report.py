@@ -25,7 +25,7 @@ class ReportRepo:
             await req.fetchval(report_id, info, photo)
 
     @staticmethod
-    async def del_report(report_id: int, conn: asyncpg.Connection)-> int:
+    async def del_report(report_id: int, conn: asyncpg.Connection) -> int:
         if res := await conn.fetchval(
             "DELETE FROM report WHERE id = $1 RETURNING id",
             report_id,

@@ -61,5 +61,5 @@ class ReportService:
         return await ReportRepo.get_current(report_id, conn)
 
     @staticmethod
-    async def delete_report(report_id: int, conn: asyncpg.Connection) -> None:
+    async def delete_report(report_id: int, conn: asyncpg.Connection) -> int:
         return await ReportRepo.del_report(report_id, conn)
