@@ -20,7 +20,6 @@ class User(Base):
 class UserRegister(UserLogin):
     confirm:str = Field(min_length=3, max_length=25)
 
-
     @model_validator(mode='after')
     def verify(self) -> 'UserRegister':
         if self.password != self.confirm:
@@ -29,7 +28,7 @@ class UserRegister(UserLogin):
 
 
     @field_validator('password')
-    def validate_password(self, value:str) -> str:
+    def validate_password(cls, value:str) -> str:
         pattern4 = r'[' + re.escape('!@#$%^&*') + r']'
         if not re.search(pattern4, value):
             raise CustomHTTPException(detail=_('Password must have been complicated'), status_code=400)
