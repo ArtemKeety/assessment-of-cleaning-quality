@@ -25,7 +25,7 @@ class ReportService:
             if len(clear_photos) != len(photos):
                 raise CustomHTTPException(status_code=400, detail="not equal count photos")
 
-            task_1: asyncio.Task = asyncio.create_task(download_files(photos, RAW_REPORT_FILE_PATH))
+            task: asyncio.Task = asyncio.create_task(download_files(photos, RAW_REPORT_FILE_PATH))
 
             time = datetime.now().astimezone(ZoneInfo("UTC")).replace(tzinfo=None)
 
@@ -41,7 +41,7 @@ class ReportService:
                     conn=conn,
             )
 
-        await task_1
+        await task
 
         request_from_ai.delay(report_id, dirty_photos, clear_photos)
 
