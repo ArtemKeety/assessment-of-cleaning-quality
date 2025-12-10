@@ -18,31 +18,29 @@ class ReportService:
     @staticmethod
     async def add(flat_id: int, photos: list[UploadFile], conn: asyncpg.Connection) -> Report:
 
-        db_photo = await FlatRepo.get_id(flat_id, conn)
+        async with conn.transaction():
+            db_photo = await FlatRepo.get_id(flat_id, conn)
 
-        clear_photos: list[str] = [obj.path for obj in db_photo]
+            clear_photos: list[str] = [obj.path for obj in db_photo]
 
-        if len(clear_photos) != len(photos):
-            raise CustomHTTPException(status_code=400, detail="not equal count photos")
+            if len(clear_photos) != len(photos):
+                raise CustomHTTPException(status_code=400, detail="not equal count photos")
 
-        task_1: asyncio.Task = asyncio.create_task(download_files(photos, RAW_REPORT_FILE_PATH))
+            task_1: asyncio.Task = asyncio.create_task(download_files(photos, RAW_REPORT_FILE_PATH))
 
-        time = datetime.now().astimezone(ZoneInfo("UTC")).replace(tzinfo=None)
+            time = datetime.now().astimezone(ZoneInfo("UTC")).replace(tzinfo=None)
 
-        report_id = await ReportRepo.add_report_place(flat_id, photos[0].filename, time, conn)
+            report_id = await ReportRepo.add_report_place(flat_id, photos[0].filename, time, conn)
 
-        dirty_photos = [obj.filename for obj in photos]
+            dirty_photos = [obj.filename for obj in photos]
 
-        if not await ReportRepo.add_report_photo_raw(
-                report_id=report_id,
-                info="Нейросесть обрабатывает запрос, подождите....",
-                photo="default.gif",
-                count=len(photos),
-                conn=conn,
-        ):
-            task_1.cancel()
-            await ReportRepo.del_report(report_id, conn)
-            raise CustomHTTPException(status_code=501, detail="Error in adding report")
+            await ReportRepo.add_report_photo_raw(
+                    report_id=report_id,
+                    info="Нейросесть обрабатывает запрос, подождите....",
+                    photo="default.gif",
+                    count=len(photos),
+                    conn=conn,
+            )
 
         await task_1
 

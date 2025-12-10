@@ -19,15 +19,9 @@ class ReportRepo:
 
     @staticmethod
     async def add_report_photo_raw(report_id: int, info: str, photo: str, count: int, conn: asyncpg.Connection) -> bool:
-        try:
-            req = await conn.prepare("insert into report_part (report_id, info, path) values ($1, $2, $3)")
-            async with conn.transaction():
-                for i in range(count):
-                    await req.fetchval(report_id, info, photo)
-            return True
-        except BaseException as e:
-            LOGGER.error(f"{type(e).__name__}: {e}")
-            return False
+        req = await conn.prepare("insert into report_part (report_id, info, path) values ($1, $2, $3)")
+        for _ in range(count):
+            await req.fetchval(report_id, info, photo)
 
     @staticmethod
     async def del_report(report_id: int, conn: asyncpg.Connection)-> int:

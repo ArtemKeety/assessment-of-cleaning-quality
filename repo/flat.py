@@ -19,26 +19,18 @@ class FlatRepo:
 
     @staticmethod
     async def add_flat_photo(photos: list[UploadFile], flat_id: int, conn: asyncpg.Connection) -> bool:
-        try:
-            req = await conn.prepare('INSERT INTO photo (path, flat_id) VALUES ($1, $2)')
-            async with conn.transaction():
-                for photo in photos:
-                    await req.fetchval(photo.filename, flat_id)
-            return True
-        except BaseException as e:
-            LOGGER.error(f"{type(e).__name__}: {e}")
-            return False
-
+        req = await conn.prepare('INSERT INTO photo (path, flat_id) VALUES ($1, $2)')
+        for photo in photos:
+            await req.fetchval(photo.filename, flat_id)
 
     @staticmethod
-    async def delete(flat_id: int, conn: asyncpg.Connection) -> bool:
+    async def delete(flat_id: int, conn: asyncpg.Connection) -> int:
         if res := await conn.fetchval(
             "DELETE FROM flat WHERE id = $1 RETURNING id",
                 flat_id
         ):
             return res
         raise CustomHTTPException(status_code=404, detail="error in deleting flat")
-
 
     @staticmethod
     async def all(user_id: int, conn: asyncpg.Connection) -> list[Flat]:

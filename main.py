@@ -69,6 +69,7 @@ app.add_exception_handler(CustomHTTPException, ErrorHandler.CustomHTTPException)
 app.add_exception_handler(asyncpg.UniqueViolationError, ErrorHandler.UniqueViolationError)
 app.add_exception_handler(RequestValidationError, ErrorHandler.PydenticValidationError)
 app.add_exception_handler(ConnectionError, ErrorHandler.ConnectionError)
+app.add_exception_handler(Exception, ErrorHandler.Panic)
 
 app.include_router(user_router, prefix="/api/v1", tags=["user"])
 app.include_router(flat_router, prefix="/api/v1", tags=["flat"])

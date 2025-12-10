@@ -49,6 +49,15 @@ class ErrorHandler:
             }
         )
 
+    @staticmethod
+    async def Panic(request: Request, exception: Exception):
+        LOGGER.error(f"{type(exception).__name__}:{exception}")
+        return JSONResponse(
+            status_code=500,
+            content={
+                "message": "An unexpected error has occurred",
+            }
+        )
 
 
 
