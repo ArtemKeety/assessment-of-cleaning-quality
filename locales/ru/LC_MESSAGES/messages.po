@@ -1,0 +1,91 @@
+# Russian translations for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-12-11 01:05+0300\n"
+"PO-Revision-Date: 2025-12-11 01:06+0300\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ru\n"
+"Language-Team: ru <LL@li.org>\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: user
+msgid "User already exists"
+msgstr "Пользователь уже существует"
+
+msgid "Error in deleting user"
+msgstr "Ошибка при удалении пользователя"
+
+msgid "Error adding user"
+msgstr "Ошибка при добавлении пользователя"
+
+msgid "Error getting user"
+msgstr "Ошибка при получении пользователя"
+
+msgid "Error verifying password"
+msgstr "Ошибка при верификации пользователя"
+
+#: flat
+msgid "Error in adding flat"
+msgstr "Ошибка при добавлении квартиры"
+
+msgid "Error in deleting flat"
+msgstr "Ошибка при удалении квартиры"
+
+msgid "Not found flat full data"
+msgstr "Нет данных по этой квартире"
+
+#: report
+msgid "Error adding report"
+msgstr "Ошибка при добавлении отчёта"
+
+msgid "Error deleting report"
+msgstr "Ошибка при удалении отчёта"
+
+msgid "Not found report"
+msgstr "Не найден отчёт"
+
+msgid "Not equal count photos"
+msgstr "Количество фотографий не соответствует"
+
+#: errors
+msgid "An unexpected error has occurred"
+msgstr "Произошла непредвиденная ошибка"
+
+msgid "Сonnection error"
+msgstr "Ошибка с соединением"
+
+msgid "violation of the terms"
+msgstr "Нарушены условия"
+
+#: auth
+msgid "Not found credentials"
+msgstr "Нет токена в запросе"
+
+msgid "Out of session"
+msgstr "Сессия истекла"
+
+msgid "User-Agent not match"
+msgstr "Не проходит user-agent"
+
+
+
+
+
+
+
+
+
+
+
+

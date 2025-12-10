@@ -1,4 +1,5 @@
 from typing import Optional
+from fastapi_babel import _
 from asyncpg import Connection
 from shemas import UserLogin, User
 from midleware import CustomHTTPException
@@ -31,4 +32,4 @@ class UserRepo:
             False, user_id
         ):
             return res
-        raise CustomHTTPException(detail="error in deleting user", status_code=501)
+        raise CustomHTTPException(detail=_("Error in deleting user"), status_code=501)

@@ -1,6 +1,6 @@
 import asyncpg
+from fastapi_babel import _
 from fastapi import UploadFile
-from customlogger import LOGGER
 from shemas import Flat, FullFlat
 from midleware import CustomHTTPException
 
@@ -15,7 +15,7 @@ class FlatRepo:
                 name, user_id, preview.filename
         ):
             return res
-        raise CustomHTTPException(status_code=501, detail="error in adding flat")
+        raise CustomHTTPException(status_code=501, detail=_("Error in adding flat"))
 
     @staticmethod
     async def add_flat_photo(photos: list[UploadFile], flat_id: int, conn: asyncpg.Connection) -> bool:
@@ -30,7 +30,7 @@ class FlatRepo:
                 flat_id
         ):
             return res
-        raise CustomHTTPException(status_code=404, detail="error in deleting flat")
+        raise CustomHTTPException(status_code=404, detail=_("Error in deleting flat"))
 
     @staticmethod
     async def all(user_id: int, conn: asyncpg.Connection) -> list[Flat]:
@@ -53,7 +53,7 @@ class FlatRepo:
             flat_id,
         ):
             return [FullFlat(**obj) for obj in res]
-        raise CustomHTTPException(status_code=404, detail="Not found flat full data")
+        raise CustomHTTPException(status_code=404, detail=_("Not found flat full data"))
 
 
 

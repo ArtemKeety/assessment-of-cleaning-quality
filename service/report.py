@@ -1,5 +1,6 @@
 import asyncio
 import asyncpg
+from fastapi_babel import _
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from fastapi import UploadFile
@@ -23,7 +24,7 @@ class ReportService:
             clear_photos: list[str] = [obj.path for obj in db_photo]
 
             if len(clear_photos) != len(photos):
-                raise CustomHTTPException(status_code=400, detail="not equal count photos")
+                raise CustomHTTPException(status_code=400, detail=_("Not equal count photos"))
 
             task: asyncio.Task = asyncio.create_task(download_files(photos, RAW_REPORT_FILE_PATH))
 

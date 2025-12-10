@@ -1,6 +1,7 @@
 import uuid
 from repo import UserRepo
 from utils import Password
+from fastapi_babel import _
 from database import RedisDb
 from asyncpg import Connection
 from midleware import CustomHTTPException
@@ -13,12 +14,12 @@ class UserService:
     @staticmethod
     async def sign_up(u: UserRegister, agent: str, redis: RedisDb, conn: Connection) -> Session:
         if await UserRepo.get_user(u, conn):
-            raise CustomHTTPException(status_code=409, detail="User already exists")
+            raise CustomHTTPException(status_code=409, detail=_("User already exists"))
 
         u.password = Password.hash_password(u.password)
 
         if not (user_id := await UserRepo.add_user(u, conn)):
-            raise CustomHTTPException(status_code=501, detail="Error adding user")
+            raise CustomHTTPException(status_code=501, detail=_("Error adding user"))
 
         session: str = f"{u.password}.{user_id}.{uuid.uuid4()}"
 
@@ -30,10 +31,10 @@ class UserService:
     @staticmethod
     async def sign_in(u: UserLogin, agent:str, redis: RedisDb, conn: Connection) -> Session:
         if not (user := await UserRepo.get_user(u, conn)):
-            raise CustomHTTPException(status_code=400, detail="Error getting user")
+            raise CustomHTTPException(status_code=400, detail=_("Error getting user"))
 
         if not Password.verify(user.password, u.password):
-            raise CustomHTTPException(status_code=400, detail="Error verifying password")
+            raise CustomHTTPException(status_code=400, detail=_("Error verifying password"))
 
         session: str = f"{user.password}.{user.id}.{uuid.uuid4()}"
 

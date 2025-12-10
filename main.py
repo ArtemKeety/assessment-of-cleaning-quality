@@ -19,6 +19,8 @@ from fastapi.exceptions import RequestValidationError
 from configuration import TIMEOUT, FLAT_FILE_PATH, REPORT_FILE_PATH, RedisConfig, RAW_REPORT_FILE_PATH, WORKERS
 from midleware import CustomHTTPException, ErrorHandler, LogMiddleware, TimeoutMiddleware, user_address, swagger_auth
 
+from fastapi_babel import Babel, BabelConfigs, BabelMiddleware
+
 LOGGER.setLevel(logging.DEBUG)
 
 @asynccontextmanager
@@ -49,6 +51,14 @@ app = FastAPI(
     dependencies=[Depends(RateLimiter(times=60, seconds=60))],
 )
 
+babel_configs = BabelConfigs(
+    ROOT_DIR=__file__,
+    BABEL_DEFAULT_LOCALE="en",
+    BABEL_TRANSLATION_DIRECTORY="locales"
+)
+
+babel = Babel(configs=babel_configs)
+
 origins = (
     "http://127.0.0.1:8000",
     "http://127.0.0.1:3000",
@@ -64,6 +74,7 @@ app.add_middleware(
 )
 app.add_middleware(LogMiddleware)
 app.add_middleware(TimeoutMiddleware, TIMEOUT)
+app.add_middleware(BabelMiddleware, babel_configs=babel_configs)
 
 app.add_exception_handler(CustomHTTPException, ErrorHandler.CustomHTTPException)
 app.add_exception_handler(asyncpg.UniqueViolationError, ErrorHandler.UniqueViolationError)

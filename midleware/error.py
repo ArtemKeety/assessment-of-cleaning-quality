@@ -1,3 +1,4 @@
+from fastapi_babel import _
 from customlogger import LOGGER
 from pydantic import ValidationError
 from fastapi import HTTPException, Request
@@ -24,7 +25,7 @@ class ErrorHandler:
         return JSONResponse(
             status_code=409,
             content={
-                "message": "violation of the terms",
+                "message": _("violation of the terms"),
                 "error": f"{type(exception).__name__}:{exception}"
             }
         )
@@ -44,7 +45,7 @@ class ErrorHandler:
         return JSONResponse(
             status_code=500,
             content={
-                "message": "connection error",
+                "message": _("Сonnection error"),
                 "error": f"{type(exception).__name__}:{exception}"
             }
         )
@@ -55,7 +56,7 @@ class ErrorHandler:
         return JSONResponse(
             status_code=500,
             content={
-                "message": "An unexpected error has occurred",
+                "message": _("An unexpected error has occurred"),
             }
         )
 

@@ -1,4 +1,5 @@
 import asyncpg
+from fastapi_babel import _
 from datetime import datetime
 from customlogger import LOGGER
 from shemas import Report, ReportPath
@@ -15,7 +16,7 @@ class ReportRepo:
             flat_id, path, date,
         ):
             return res
-        raise CustomHTTPException(status_code=501, detail="Error adding report")
+        raise CustomHTTPException(status_code=501, detail=_("Error adding report"))
 
     @staticmethod
     async def add_report_photo_raw(report_id: int, info: str, photo: str, count: int, conn: asyncpg.Connection) -> bool:
@@ -30,7 +31,7 @@ class ReportRepo:
             report_id,
         ):
             return res
-        raise CustomHTTPException(status_code=404, detail="Error deleting report")
+        raise CustomHTTPException(status_code=404, detail=_("Error deleting report"))
 
     @staticmethod
     async def get_reports(user_id:int, conn: asyncpg.Connection) -> list[Report]:
@@ -53,7 +54,7 @@ class ReportRepo:
             flat_id,
         ):
             return [Report(**obj) for obj in res]
-        raise CustomHTTPException(status_code=404, detail="Not found report")
+        raise CustomHTTPException(status_code=404, detail=_("Not found report"))
 
     @staticmethod
     async def get_current(report_id: int, conn: asyncpg.Connection) -> list[ReportPath]:
@@ -62,5 +63,5 @@ class ReportRepo:
             report_id,
         ):
             return [ReportPath(**obj) for obj in res]
-        raise CustomHTTPException(status_code=404, detail="Not found report")
+        raise CustomHTTPException(status_code=404, detail=_("Not found report"))
 
