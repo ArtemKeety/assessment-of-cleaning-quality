@@ -35,6 +35,13 @@ msgstr "Ошибка при получении пользователя"
 msgid "Error verifying password"
 msgstr "Ошибка при верификации пользователя"
 
+msgid "Passwords do not equal"
+msgstr "Пароли не совпадают"
+
+msgid "Password must have been complicated"
+msgstr "Пароль, должно быть, был сложным"
+
+
 #: flat
 msgid "Error in adding flat"
 msgstr "Ошибка при добавлении квартиры"

@@ -1,6 +1,8 @@
+import re
 from .base import Base
+from fastapi_babel import _
 from midleware import CustomHTTPException
-from pydantic import model_validator, Field
+from pydantic import model_validator, Field, field_validator
 
 
 class UserLogin(Base):
@@ -18,10 +20,18 @@ class User(Base):
 class UserRegister(UserLogin):
     confirm:str = Field(min_length=3, max_length=25)
 
+
     @model_validator(mode='after')
     def verify(self) -> 'UserRegister':
         if self.password != self.confirm:
-            raise CustomHTTPException(detail='Passwords do not equal', status_code=400)
+            raise CustomHTTPException(detail=_('Passwords do not equal'), status_code=400)
         return self
 
+
+    @field_validator('password')
+    def validate_password(self, value:str) -> str:
+        pattern4 = r'[' + re.escape('!@#$%^&*') + r']'
+        if not re.search(pattern4, value):
+            raise CustomHTTPException(detail=_('Password must have been complicated'), status_code=400)
+        return value
 
