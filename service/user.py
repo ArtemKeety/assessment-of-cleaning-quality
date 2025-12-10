@@ -4,15 +4,15 @@ from utils import Password
 from database import RedisDb
 from asyncpg import Connection
 from midleware import CustomHTTPException
-from shemas import UserRegister, UserLogin
+from shemas import UserRegister, UserLogin, Session
 
 
 
 class UserService:
 
     @staticmethod
-    async def sign_up(u: UserRegister, agent: str, redis: RedisDb, conn: Connection) -> str:
-        if user := await UserRepo.get_user(u, conn):
+    async def sign_up(u: UserRegister, agent: str, redis: RedisDb, conn: Connection) -> Session:
+        if await UserRepo.get_user(u, conn):
             raise CustomHTTPException(status_code=409, detail="User already exists")
 
         u.password = Password.hash_password(u.password)
@@ -24,11 +24,11 @@ class UserService:
 
         await redis.add(session, {"User-Agent": agent, "user_id": user_id})
 
-        return session
+        return Session(session=session)
 
 
     @staticmethod
-    async def sign_in(u: UserLogin, agent:str, redis: RedisDb, conn: Connection)->str:
+    async def sign_in(u: UserLogin, agent:str, redis: RedisDb, conn: Connection) -> Session:
         if not (user := await UserRepo.get_user(u, conn)):
             raise CustomHTTPException(status_code=400, detail="Error getting user")
 
@@ -39,7 +39,7 @@ class UserService:
 
         await redis.add(session, {"User-Agent": agent, "user_id": user.id})
 
-        return session
+        return Session(session=session)
 
 
     @staticmethod

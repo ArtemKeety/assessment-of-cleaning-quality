@@ -19,7 +19,7 @@ async def sign_up(
         conn: Connection = Depends(DataBase.from_request_conn),
         redis: RedisDb = Depends(RedisDb.from_request_conn)
 )-> Session:
-    s: Session = Session(session=await UserService.sign_up(r, agent, redis, conn))
+    s: Session = await UserService.sign_up(r, agent, redis, conn)
     res.set_cookie(
         'session',
         value=s.session,
@@ -38,7 +38,7 @@ async def sign_in(
         conn: Connection = Depends(DataBase.from_request_conn),
         redis: RedisDb = Depends(RedisDb.from_request_conn)
 )-> Session:
-    s: Session = Session(session=await UserService.sign_in(u, agent, redis, conn))
+    s: Session = await UserService.sign_in(u, agent, redis, conn)
     res.set_cookie(
         'session',
         value=s.session,
