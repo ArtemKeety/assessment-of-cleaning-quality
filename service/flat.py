@@ -10,7 +10,7 @@ class FlatService:
 
     @staticmethod
     async def add(name: str, user_id: int, photos: list[UploadFile], conn: asyncpg.Connection) -> Flat:
-        download_task = asyncio.create_task(download_files(photos, FLAT_FILE_PATH))
+        download_task: asyncio.Task = asyncio.create_task(download_files(photos, FLAT_FILE_PATH))
         async with conn.transaction():
             flat_id = await FlatRepo.add_flat(name, user_id, photos[0], conn)
             await FlatRepo.add_flat_photo(photos, flat_id, conn)
