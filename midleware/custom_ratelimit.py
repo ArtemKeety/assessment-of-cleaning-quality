@@ -1,9 +1,10 @@
 from typing import Any
 from fastapi_babel import _
 from .auth import user_identy
+from .error import CustomHTTPException
 from fastapi import Depends, Request, Response
 from fastapi_limiter.depends import RateLimiter
-from .error import CustomHTTPException
+
 
 class CustomRateLimit:
     __slots__ = ('__times', '__count')
