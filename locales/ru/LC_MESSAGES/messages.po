@@ -41,6 +41,8 @@ msgstr "Пароли не совпадают"
 msgid "Password must have been complicated"
 msgstr "Пароль, должно быть, был сложным"
 
+msgid "Too much request"
+msgstr "Слишком много запрос"
 
 #: flat
 msgid "Error in adding flat"

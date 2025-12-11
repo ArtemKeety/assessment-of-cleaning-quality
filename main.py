@@ -21,7 +21,7 @@ from midleware import CustomHTTPException, ErrorHandler, LogMiddleware, TimeoutM
 
 from fastapi_babel import Babel, BabelConfigs, BabelMiddleware
 
-LOGGER.setLevel(logging.DEBUG)
+LOGGER.setLevel(logging.INFO)
 
 @asynccontextmanager
 async def lifespan(fastapi: FastAPI):
