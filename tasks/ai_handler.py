@@ -50,11 +50,11 @@ def choice_type(path: str)-> str:
 
 models = (
         "nvidia/nemotron-nano-12b-v2-vl:free",  # + 0
-        "google/gemma-3-27b-it:free", # +/- 1 rate/limit
-        'x-ai/grok-4.1-fast:free',  # +\- 2 (403 error)
-        "google/gemini-2.0-flash-exp:free", # +/- 3 large timeout and rateLimiter
-        'openrouter/bert-nebulon-alpha', # -/+ 4 / last Error
-        "mistralai/mistral-small-3.1-24b-instruct:free", # 5
+        'amazon/nova-2-lite-v1:free',  # 1
+        "google/gemma-3-27b-it:free", # +/- 2 rate/limit
+        'x-ai/grok-4.1-fast:free',  # +\- 3 (403 error)
+        "google/gemini-2.0-flash-exp:free", # +/- 4 large timeout and rateLimiter
+        'openrouter/bert-nebulon-alpha', # -/+ 5 / last Error
         'google/gemma-3-4b-it:free', # 6
         'google/gemma-3-12b-it:free', # 7
 )
@@ -76,7 +76,7 @@ def create_comment(s: requests.Session, clear: str, dirty: str):
             "Content-Type": "application/json",
         },
         data=orjson.dumps({
-            "model": models[0],
+            "model": models[8],
             "messages": [
                 {
                     "role": "user", #"system", #"user",
