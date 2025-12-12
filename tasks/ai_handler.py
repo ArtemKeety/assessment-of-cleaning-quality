@@ -119,7 +119,7 @@ def create_comment(s: requests.Session, clear: str, dirty: str):
                     ]
                 }
             ],
-            "max_tokens": 512,
+            "max_tokens": 1256,
             "temperature": 0.1,
             "top_p": 0.8,
             "include_reasoning": False,

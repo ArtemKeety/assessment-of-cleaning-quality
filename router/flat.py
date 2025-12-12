@@ -3,7 +3,7 @@ from database import DataBase
 from service import FlatService
 from shemas import Flat, FullFlat
 from fastapi import APIRouter, Depends, UploadFile, Body
-from midleware import user_identy, valid_files, CustomRateLimit
+from midleware import user_identy, ValidateFiles, CustomRateLimit
 
 router = APIRouter(prefix="/flat")
 
@@ -11,7 +11,7 @@ router = APIRouter(prefix="/flat")
 @router.post("/add", response_model=Flat)
 async def add_flat(
         name: str = Body(),
-        photos: list[UploadFile] = Depends(valid_files),
+        photos: list[UploadFile] = Depends(ValidateFiles()),
         user_data = Depends(CustomRateLimit(1, minute=3)),
         conn: asyncpg.Connection = Depends(DataBase.from_request_conn)
 ):

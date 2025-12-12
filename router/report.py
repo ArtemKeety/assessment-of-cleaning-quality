@@ -3,7 +3,7 @@ from database import DataBase
 from service import ReportService
 from shemas import Report, ReportPath
 from fastapi import APIRouter, UploadFile, Depends, Body
-from midleware import user_identy, valid_files, CustomRateLimit
+from midleware import user_identy, ValidateFiles, CustomRateLimit
 
 
 router = APIRouter(prefix="/report")
@@ -12,7 +12,7 @@ router = APIRouter(prefix="/report")
 @router.post("/add", response_model=Report, dependencies=[Depends(CustomRateLimit(1, minute=3))])
 async def add(
         flat_id: int = Body(),
-        photos: list[UploadFile]=Depends(valid_files),
+        photos: list[UploadFile]=Depends(ValidateFiles()),
         conn: asyncpg.Connection = Depends(DataBase.from_request_conn),
 ):
     return await ReportService.add(flat_id, photos, conn)
