@@ -77,6 +77,15 @@ msgstr "Ошибка с соединением"
 msgid "violation of the terms"
 msgstr "Нарушены условия"
 
+msgid "Too many photos"
+msgstr "Много фотографий"
+
+msgid "Unnecessary data format file"
+msgstr "Не верный формат файла"
+
+msgid "is big file"
+msgstr "это большой файл"
+
 #: auth
 msgid "Not found credentials"
 msgstr "Нет токена в запросе"
