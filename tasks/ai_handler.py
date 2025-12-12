@@ -120,8 +120,12 @@ def create_comment(s: requests.Session, clear: str, dirty: str):
                 }
             ],
             "max_tokens": 512,
-            "temperature": 0.2,
+            "temperature": 0.1,
             "top_p": 0.8,
+            "include_reasoning": False,
+            "reasoning": {
+                "effort": "minimal"      # или "low"
+            },
         })
     )
     response.raise_for_status()
@@ -131,6 +135,19 @@ def create_comment(s: requests.Session, clear: str, dirty: str):
     if code := data.get('error'):
         if code['code'] != 200:
             raise Exception(code['message'])
+
+    usage = data.get("usage", {})
+    comp = usage.get("completion_tokens", 0)
+    reasoning = usage.get("completion_tokens_details", {}).get("reasoning_tokens", 0)
+    prompt = usage.get("prompt_tokens", 0)
+
+    LOGGER.info(
+        "Tokens: prompt=%s, completion=%s (reasoning=%s, answer≈%s)",
+        prompt,
+        comp,
+        reasoning,
+        comp - reasoning,
+    )
 
     return data['choices'][0]['message']['content']
 
