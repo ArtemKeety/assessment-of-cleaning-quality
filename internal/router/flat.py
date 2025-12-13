@@ -5,7 +5,9 @@ from internal.shemas import Flat, FullFlat
 from fastapi import APIRouter, Depends, UploadFile, Body
 from internal.midleware import user_identy, ValidateFiles, CustomRateLimit
 
+
 router = APIRouter(prefix="/flat")
+
 
 @router.post("/add", response_model=Flat)
 async def add_flat(
