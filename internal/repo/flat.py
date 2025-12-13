@@ -55,5 +55,10 @@ class FlatRepo:
             return [FullFlat(**obj) for obj in res]
         raise CustomHTTPException(status_code=404, detail=_("Not found flat full data"))
 
+    @staticmethod
+    async def count(user_id: int, conn: asyncpg.Connection) -> int:
+        return await conn.fetchval("select count(*) from flat where user_id = $1", user_id)
 
-
+    @staticmethod
+    async def lock(key: int, conn: asyncpg.Connection) -> None:
+        await conn.execute('select pg_advisory_xact_lock($1)', key)

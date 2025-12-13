@@ -1,20 +1,36 @@
 import asyncio
 import asyncpg
-from internal.repo import FlatRepo
+from fastapi_babel import _
 from fastapi import UploadFile
 from utils import download_files
+from internal.repo import FlatRepo
 from internal.shemas import Flat, FullFlat
-from configuration import FLAT_FILE_PATH
+from internal.midleware import CustomHTTPException
+from configuration import FLAT_FILE_PATH, MAX_COUNT
 
 class FlatService:
 
     @staticmethod
     async def add(name: str, user_id: int, photos: list[UploadFile], conn: asyncpg.Connection) -> Flat:
+
         download_task: asyncio.Task = asyncio.create_task(download_files(photos, FLAT_FILE_PATH))
-        async with conn.transaction():
+
+        async with conn.transaction(isolation='read_committed'):
+
+            await FlatRepo.lock(user_id, conn)
+
+            if MAX_COUNT <= await FlatRepo.count(user_id, conn):
+                download_task.cancel()
+                raise CustomHTTPException(
+                    detail=_("A user cannot have a flat of more than") + f" {MAX_COUNT}",
+                    status_code=400,
+                )
+
             flat_id = await FlatRepo.add_flat(name, user_id, photos[0], conn)
+
             await FlatRepo.add_flat_photo(photos, flat_id, conn)
-            await download_task
+
+        await download_task
 
         return Flat(id=flat_id, name=name, preview=photos[0].filename)
 

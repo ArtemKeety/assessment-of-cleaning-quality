@@ -39,7 +39,7 @@ msgid "Passwords do not equal"
 msgstr "Пароли не совпадают"
 
 msgid "Password must have been complicated"
-msgstr "Пароль, должно быть, был сложным"
+msgstr "Пароль, должен быть сложным"
 
 msgid "Too much request"
 msgstr "Слишком много запрос"
@@ -53,6 +53,9 @@ msgstr "Ошибка при удалении квартиры"
 
 msgid "Not found flat full data"
 msgstr "Нет данных по этой квартире"
+
+msgid "A user cannot have a flat of more than"
+msgstr "Пользователь не может иметь квартир больше"
 
 #: report
 msgid "Error adding report"
