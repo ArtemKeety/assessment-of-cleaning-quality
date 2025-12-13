@@ -7,7 +7,6 @@ from internal.midleware import user_identy, ValidateFiles, CustomRateLimit
 
 router = APIRouter(prefix="/flat")
 
-
 @router.post("/add", response_model=Flat)
 async def add_flat(
         name: str = Body(),

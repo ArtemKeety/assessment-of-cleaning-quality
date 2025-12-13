@@ -8,6 +8,7 @@ from internal.shemas import Flat, FullFlat
 from internal.midleware import CustomHTTPException
 from configuration import FLAT_FILE_PATH, MAX_COUNT
 
+
 class FlatService:
 
     @staticmethod

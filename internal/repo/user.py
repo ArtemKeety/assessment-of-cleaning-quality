@@ -7,7 +7,6 @@ from internal.midleware import CustomHTTPException
 
 class UserRepo:
 
-
     @staticmethod
     async def get_user(u: UserLogin, conn: Connection)-> Optional[User]:
         if res := await conn.fetchrow(
@@ -16,7 +15,6 @@ class UserRepo:
         ):
             return User(**res)
         return None
-
 
     @staticmethod
     async def add_user(u: UserLogin, conn: Connection) -> int:

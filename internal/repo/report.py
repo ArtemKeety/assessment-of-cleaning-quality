@@ -5,7 +5,6 @@ from internal.shemas import Report, ReportPath
 from internal.midleware import CustomHTTPException
 
 
-
 class ReportRepo:
 
     @staticmethod

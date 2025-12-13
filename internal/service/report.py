@@ -12,8 +12,6 @@ from internal.repo import ReportRepo, FlatRepo
 from internal.midleware import CustomHTTPException
 
 
-
-
 class ReportService:
 
     @staticmethod

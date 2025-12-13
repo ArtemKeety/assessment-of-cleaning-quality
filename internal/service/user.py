@@ -8,7 +8,6 @@ from internal.midleware import CustomHTTPException
 from internal.shemas import UserRegister, UserLogin, Session
 
 
-
 class UserService:
 
     @staticmethod
