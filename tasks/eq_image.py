@@ -202,7 +202,7 @@ def highlight_differences(imgA_path: str, imgB_path: str, min_area: int = 55) ->
 
         cv2.rectangle(vis, (x, y), (x + w, y + h), (36, 255, 12), 2)
 
-    #cv2.imwrite(path, vis)
+    cv2.imwrite(path, vis)
     # cv2.imshow('photo', vis)
     # cv2.waitKey()
     return base_name
