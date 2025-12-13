@@ -16,9 +16,7 @@ class FlatService:
 
         download_task: asyncio.Task = asyncio.create_task(download_files(photos, FLAT_FILE_PATH))
 
-        async with conn.transaction(isolation='read_committed'):
-
-            await FlatRepo.lock(user_id, conn)
+        async with conn.transaction(isolation='serializable'):
 
             if MAX_COUNT <= await FlatRepo.count(user_id, conn):
                 download_task.cancel()
