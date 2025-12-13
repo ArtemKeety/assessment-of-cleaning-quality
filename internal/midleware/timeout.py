@@ -1,8 +1,6 @@
 import asyncio
 from fastapi import Request
 from starlette.responses import JSONResponse
-
-from .error import CustomHTTPException
 from starlette.middleware.base import BaseHTTPMiddleware
 
 

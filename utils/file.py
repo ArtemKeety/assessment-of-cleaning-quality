@@ -2,7 +2,6 @@ import os
 import asyncio
 import aiofiles
 from fastapi import UploadFile
-from midleware import CustomHTTPException
 
 
 async def download_file(photo: UploadFile, directory: str):

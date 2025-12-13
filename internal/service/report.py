@@ -6,10 +6,11 @@ from zoneinfo import ZoneInfo
 from fastapi import UploadFile
 from utils import download_files
 from tasks import request_from_ai
-from shemas import Report, ReportPath
-from repo import ReportRepo, FlatRepo
-from midleware import CustomHTTPException
 from configuration import RAW_REPORT_FILE_PATH
+from internal.shemas import Report, ReportPath
+from internal.repo import ReportRepo, FlatRepo
+from internal.midleware import CustomHTTPException
+
 
 
 

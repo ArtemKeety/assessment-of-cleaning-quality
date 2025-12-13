@@ -1,7 +1,7 @@
 import re
 from .base import Base
 from fastapi_babel import _
-from midleware import CustomHTTPException
+from internal.midleware import CustomHTTPException
 from pydantic import model_validator, Field, field_validator
 
 

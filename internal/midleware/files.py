@@ -3,7 +3,7 @@ import uuid
 from fastapi_babel import _
 from fastapi import UploadFile
 from configuration import FILE_SIZE
-from midleware import CustomHTTPException
+from internal.midleware import CustomHTTPException
 
 class ValidateFiles:
 

@@ -1,8 +1,8 @@
 import asyncpg
 from fastapi_babel import _
 from fastapi import UploadFile
-from shemas import Flat, FullFlat
-from midleware import CustomHTTPException
+from internal.shemas import Flat, FullFlat
+from internal.midleware import CustomHTTPException
 
 
 

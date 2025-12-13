@@ -1,9 +1,9 @@
 import asyncio
 import asyncpg
-from repo import FlatRepo
+from internal.repo import FlatRepo
 from fastapi import UploadFile
 from utils import download_files
-from shemas import Flat, FullFlat
+from internal.shemas import Flat, FullFlat
 from configuration import FLAT_FILE_PATH
 
 class FlatService:

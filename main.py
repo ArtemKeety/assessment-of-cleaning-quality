@@ -1,7 +1,7 @@
 import os
 import asyncpg
 import logging
-from router import *
+from internal.router import *
 from fastapi import Depends
 from fastapi import FastAPI
 from granian import Granian
@@ -17,7 +17,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.exceptions import RequestValidationError
 from configuration import TIMEOUT, FLAT_FILE_PATH, REPORT_FILE_PATH, RedisConfig, RAW_REPORT_FILE_PATH, WORKERS
-from midleware import CustomHTTPException, ErrorHandler, LogMiddleware, TimeoutMiddleware, user_address, swagger_auth
+from internal.midleware import CustomHTTPException, ErrorHandler, LogMiddleware, TimeoutMiddleware, user_address, swagger_auth
 
 from fastapi_babel import Babel, BabelConfigs, BabelMiddleware
 

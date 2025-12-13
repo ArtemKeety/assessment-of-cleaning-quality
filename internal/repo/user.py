@@ -1,8 +1,8 @@
 from typing import Optional
 from fastapi_babel import _
 from asyncpg import Connection
-from shemas import UserLogin, User
-from midleware import CustomHTTPException
+from internal.shemas import UserLogin, User
+from internal.midleware import CustomHTTPException
 
 
 class UserRepo:

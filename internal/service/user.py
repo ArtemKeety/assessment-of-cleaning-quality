@@ -1,11 +1,11 @@
 import uuid
-from repo import UserRepo
 from utils import Password
 from fastapi_babel import _
 from database import RedisDb
 from asyncpg import Connection
-from midleware import CustomHTTPException
-from shemas import UserRegister, UserLogin, Session
+from internal.repo import UserRepo
+from internal.midleware import CustomHTTPException
+from internal.shemas import UserRegister, UserLogin, Session
 
 
 

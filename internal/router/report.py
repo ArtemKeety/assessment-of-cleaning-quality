@@ -1,9 +1,9 @@
 import asyncpg
 from database import DataBase
-from service import ReportService
-from shemas import Report, ReportPath
+from internal.service import ReportService
+from internal.shemas import Report, ReportPath
 from fastapi import APIRouter, UploadFile, Depends, Body
-from midleware import user_identy, ValidateFiles, CustomRateLimit
+from internal.midleware import user_identy, ValidateFiles, CustomRateLimit
 
 
 router = APIRouter(prefix="/report")

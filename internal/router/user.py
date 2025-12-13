@@ -1,10 +1,9 @@
 from asyncpg import Connection
-from service import UserService
 from database import RedisDb, DataBase
-from fastapi_limiter.depends import RateLimiter
+from internal.service import UserService
 from fastapi import APIRouter, Depends, Response
-from midleware import get_header_data, user_identy
-from shemas import UserRegister, UserLogin, Session
+from internal.midleware import get_header_data, user_identy
+from internal.shemas import UserRegister, UserLogin, Session
 from configuration import LIFE_TIME, HTTP_ONLY, SECURE_CONNECTION
 
 

@@ -1,9 +1,9 @@
 import asyncpg
 from database import DataBase
-from service import FlatService
-from shemas import Flat, FullFlat
+from internal.service import FlatService
+from internal.shemas import Flat, FullFlat
 from fastapi import APIRouter, Depends, UploadFile, Body
-from midleware import user_identy, ValidateFiles, CustomRateLimit
+from internal.midleware import user_identy, ValidateFiles, CustomRateLimit
 
 router = APIRouter(prefix="/flat")
 
