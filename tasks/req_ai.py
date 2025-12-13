@@ -5,8 +5,8 @@ import requests
 from database import SyncPsql
 from customlogger import LOGGER
 from celery_app import celery_app
-from .eq_image import create_image
 from .ai_handler import create_comment
+from .eq_image import highlight_differences
 
 
 
@@ -37,7 +37,7 @@ def request_from_ai(self, report_id: int , dirty_photo: list[str], clear_photo: 
             LOGGER.debug(f"dirty: {d_obj}, {os.path.exists(dirty)}")
             LOGGER.debug(f"clear: {c_obj}, {os.path.exists(clear)}")
             comm = create_comment(session, clear, dirty)
-            image_path = create_image(clear, dirty)
+            image_path = highlight_differences(clear, dirty)
 
             photos_id, *_ = record[idx]
             conn.execute(
