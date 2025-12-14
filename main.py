@@ -1,11 +1,11 @@
 import os
 import asyncpg
 import logging
-from internal.router import *
 from fastapi import Depends
 from fastapi import FastAPI
 from granian import Granian
 import redis.asyncio as redis
+from internal.router import *
 from customlogger import LOGGER
 from database import DataBase, RedisDb
 from granian.constants import Interfaces
