@@ -13,7 +13,7 @@ router = APIRouter(prefix="/flat")
 async def add_flat(
         name: str = Body(),
         photos: list[UploadFile] = Depends(ValidateFiles()),
-        user_data = Depends(CustomRateLimit(1, minute=3)),
+        user_data = Depends(CustomRateLimit(2, minute=1)),
         conn: asyncpg.Connection = Depends(DataBase.from_request_conn)
 ):
     return await FlatService.add(name, user_data.get('user_id'), photos, conn)

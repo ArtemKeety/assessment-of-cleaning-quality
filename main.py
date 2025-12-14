@@ -16,10 +16,10 @@ from fastapi_limiter.depends import RateLimiter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.exceptions import RequestValidationError
+from fastapi_babel import Babel, BabelConfigs, BabelMiddleware
 from configuration import TIMEOUT, FLAT_FILE_PATH, REPORT_FILE_PATH, RedisConfig, RAW_REPORT_FILE_PATH, WORKERS
 from internal.midleware import CustomHTTPException, ErrorHandler, LogMiddleware, TimeoutMiddleware, user_address, swagger_auth
 
-from fastapi_babel import Babel, BabelConfigs, BabelMiddleware
 
 LOGGER.setLevel(logging.INFO)
 
