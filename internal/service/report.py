@@ -1,6 +1,7 @@
 import asyncio
 import asyncpg
 from fastapi_babel import _
+from decimal import Decimal
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from tasks import request_from_ai
@@ -79,9 +80,12 @@ class ReportService:
             if condition: break
 
             meta: dict = result.info
+            step: Decimal = Decimal(meta.get("step", 0))
+            count: Decimal = Decimal(meta.get("count", 1))
+            percent: Decimal = step * (100/ count)
 
-            yield f"{(meta.get("step", 0) * (meta.get("count", 1) / 100))}"
+            yield f"{percent:.2f}\n"
 
             await asyncio.sleep(1)
 
-        yield "100"
+        yield "end\n"

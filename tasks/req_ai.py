@@ -67,7 +67,7 @@ def request_from_ai(self, report_id: int , dirty_photo: list[str], clear_photo: 
                 }
             )
 
-            time.sleep(30)
+            time.sleep(5)
 
     self.update_state(
         state="SUCCESS",
