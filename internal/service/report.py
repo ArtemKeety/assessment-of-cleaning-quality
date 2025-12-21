@@ -3,13 +3,15 @@ import asyncpg
 from fastapi_babel import _
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from fastapi import UploadFile
-from utils import download_files
 from tasks import request_from_ai
+from celery.result import AsyncResult
+from fastapi import UploadFile, Request
 from configuration import RAW_REPORT_FILE_PATH
 from internal.shemas import Report, ReportPath
 from internal.repo import ReportRepo, FlatRepo
+from utils import download_files, TaskCondition
 from internal.midleware import CustomHTTPException
+
 
 
 class ReportService:
@@ -62,3 +64,26 @@ class ReportService:
     @staticmethod
     async def delete_report(report_id: int, conn: asyncpg.Connection) -> int:
         return await ReportRepo.del_report(report_id, conn)
+
+    @staticmethod
+    async def task(report_id: int, request: Request):
+
+        while True:
+
+            if await request.is_disconnected(): break
+
+            if not (result := AsyncResult(str(report_id))): break
+
+            condition = result.state == TaskCondition.success or result.state == TaskCondition.failure
+
+            if condition: break
+
+            meta: dict = result.info
+
+            if meta is None: raise CustomHTTPException(status_code=500, detail=_("An unexpected error has occurred"))
+
+            yield f"{(meta.get("step", 0) * (meta.get("count", 1) / 100))}"
+
+            await asyncio.sleep(1)
+
+        yield "100"

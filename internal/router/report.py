@@ -2,7 +2,8 @@ import asyncpg
 from database import DataBase
 from internal.service import ReportService
 from internal.shemas import Report, ReportPath
-from fastapi import APIRouter, UploadFile, Depends, Body
+from fastapi.responses import StreamingResponse
+from fastapi import APIRouter, UploadFile, Depends, Body, Request
 from internal.midleware import user_identy, ValidateFiles, CustomRateLimit
 
 
@@ -35,6 +36,10 @@ async def get_an_flat(flat_id: int, conn: asyncpg.Connection = Depends(DataBase.
 @router.get('/{report_id}', response_model=list[ReportPath], description="Показать полность отчёт по id")
 async def current_report(report_id: int, conn: asyncpg.Connection = Depends(DataBase.from_request_conn)):
     return await ReportService.get_current(report_id, conn)
+
+@router.get('/task/{report_id}', response_class=StreamingResponse)
+async def task(report_id: int, request: Request ):
+    return StreamingResponse(ReportService.task(report_id, request), media_type="text/event-stream")
 
 
 @router.delete('/{report_id}', response_model=int, dependencies=[Depends(user_identy)])

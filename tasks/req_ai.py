@@ -25,9 +25,18 @@ __path_for_flat = os.path.join(__pathBase, "flat")
 )
 def request_from_ai(self, report_id: int , dirty_photo: list[str], clear_photo: list[str]):
     LOGGER.info("celery is starting")
-    self.update_state(state=0, mesage=f"{0}/{len(dirty_photo)}", meta=len(dirty_photo))
+
+    self.update_state(
+        state="PROGRESS",
+        meta={
+            "step":0,
+            "count":len(dirty_photo),
+        }
+    )
     db = SyncPsql()
+
     session = requests.Session()
+
     with db() as conn:
         conn.execute("SELECT * FROM report_part WHERE report_id = %s", (report_id, ))
         record = conn.fetchall()
@@ -35,8 +44,7 @@ def request_from_ai(self, report_id: int , dirty_photo: list[str], clear_photo: 
         for idx, (d_obj, c_obj) in enumerate(zip(dirty_photo, clear_photo)):
             dirty = os.path.join(__path_for_raw_report, d_obj)
             clear = os.path.join(__path_for_flat, c_obj)
-            LOGGER.debug(f"dirty: {d_obj}, {os.path.exists(dirty)}")
-            LOGGER.debug(f"clear: {c_obj}, {os.path.exists(clear)}")
+
             comm = create_comment(session, clear, dirty)
             image_path = highlight_differences(clear, dirty)
 
@@ -50,10 +58,23 @@ def request_from_ai(self, report_id: int , dirty_photo: list[str], clear_photo: 
                 """,
                 (comm, image_path, photos_id)
             )
-            LOGGER.debug(f"dirty: {d_obj}, is Done")
-            LOGGER.debug(f"clear: {c_obj}, is Done")
-            self.update_state(state=idx+1, mesage=f"{idx+1}/{len(dirty_photo)}", meta=len(dirty_photo))
-            time.sleep(5)
-            db.commit()
 
-        LOGGER.info("celery is done")
+            self.update_state(
+                state="PROGRESS",
+                meta={
+                    "step": idx+1,
+                    "count": len(dirty_photo),
+                }
+            )
+
+            time.sleep(30)
+
+    self.update_state(
+        state="SUCCESS",
+        meta={
+            "step": len(dirty_photo),
+            "count": len(dirty_photo),
+        }
+    )
+
+    LOGGER.info("celery is done")
