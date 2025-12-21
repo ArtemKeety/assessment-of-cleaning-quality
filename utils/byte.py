@@ -1,33 +1,11 @@
-import asyncio
-import aiofiles
-from io import BytesIO
-from fastapi import UploadFile
+import base64
 
 
-async def download_byte_from_UploadFile(photo: UploadFile) -> BytesIO:
-    stream = BytesIO()
-    while chunk := await photo.read(1024*1024):
-        stream.write(chunk)
+def encoding_file(file: str)-> base64.b64encode:
+    with open(file, "rb") as f:
+        array = []
+        while chunk := f.read(1024 * 1024):
+            array.append(chunk)
+        string = b"".join(array)
+        return base64.b64encode(string).decode('utf-8')
 
-    stream.seek(0)
-    return stream
-
-
-async def bytes_from_UploadFile(photos: list[UploadFile])-> list[BytesIO]:
-    tasks = [asyncio.create_task(download_byte_from_UploadFile(photo)) for photo in photos]
-    return await asyncio.gather(*tasks)
-
-
-async def download_byte_from_file(path:str)-> BytesIO:
-    async with aiofiles.open(path, 'rb') as file:
-        stream = BytesIO()
-        while chunk := await file.read(1024*1024):
-            stream.write(chunk)
-
-    stream.seek(0)
-    return stream
-
-
-async def bytes_from_files(paths: list[str])-> list[BytesIO]:
-    tasks = [asyncio.create_task(download_byte_from_file(path)) for path in paths]
-    return await asyncio.gather(*tasks)

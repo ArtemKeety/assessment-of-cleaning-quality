@@ -5,44 +5,13 @@ import requests
 import orjson
 import base64
 from dotenv import load_dotenv
-from functools import wraps
 from customlogger import LOGGER
+from utils import encoding_file, CustomRetry
 
 load_dotenv()
 
 API_KEY = os.getenv("API_KEY")
 
-class CustomRetry:
-
-    __slots__ = ('count', 'max_times')
-
-    def __init__(self, count: int, max_times: int):
-        self.count = count
-        self.max_times = max_times
-
-    def __call__(self, func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            error = None
-            chunk = self.max_times / self.count
-            for i in range(self.count):
-                try:
-                    return func(*args, **kwargs)
-                except Exception as e:
-                    error = e
-                    LOGGER.error(f"{type(e).__name__}: {e}")
-                    times = (i + 1) * chunk
-                    time.sleep(times)
-            raise requests.RequestException(f"{type(error).__name__}: {error}")
-        return wrapper
-
-def encoding_file(file: str)-> base64.b64encode:
-    with open(file, "rb") as f:
-        array = []
-        while chunk := f.read(1024 * 1024):
-            array.append(chunk)
-        string = b"".join(array)
-        return base64.b64encode(string).decode('utf-8')
 
 def choice_type(path: str)-> str:
     match os.path.basename(path).split(".")[-1]:

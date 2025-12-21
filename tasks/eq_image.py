@@ -238,7 +238,7 @@ if __name__ == '__main__':
     )
 
     for c, d in photos:
-        s = highlight_differences_new(c, d)
+        s = highlight_differences(c, d)
         # clear = Image.open(c)
         # dirty = Image.open(d)
         #

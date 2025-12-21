@@ -1,4 +1,5 @@
 from .password import Password
 from .file import download_files
-from .byte import bytes_from_files, bytes_from_UploadFile
+from .byte import encoding_file
 from .task import TaskCondition
+from .custom_retry import CustomRetry
