@@ -43,7 +43,7 @@ class ReportService:
 
         await task
 
-        request_from_ai.delay(report_id, dirty_photos, clear_photos)
+        request_from_ai.apply_async(args=(report_id, dirty_photos, clear_photos),  task_id=str(report_id))
 
         return Report(id=report_id, flat_id=flat_id, preview=photos[0].filename, date=time)
 

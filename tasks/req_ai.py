@@ -25,6 +25,7 @@ __path_for_flat = os.path.join(__pathBase, "flat")
 )
 def request_from_ai(self, report_id: int , dirty_photo: list[str], clear_photo: list[str]):
     LOGGER.info("celery is starting")
+    self.update_state(state=0, mesage=f"{0}/{len(dirty_photo)}", meta=len(dirty_photo))
     db = SyncPsql()
     session = requests.Session()
     with db() as conn:
@@ -51,6 +52,7 @@ def request_from_ai(self, report_id: int , dirty_photo: list[str], clear_photo: 
             )
             LOGGER.debug(f"dirty: {d_obj}, is Done")
             LOGGER.debug(f"clear: {c_obj}, is Done")
+            self.update_state(state=idx+1, mesage=f"{idx+1}/{len(dirty_photo)}", meta=len(dirty_photo))
             time.sleep(5)
             db.commit()
 
