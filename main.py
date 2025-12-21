@@ -43,7 +43,7 @@ async def lifespan(fastapi: FastAPI):
 
 app = FastAPI(
     lifespan=lifespan,
-    version="1.0.0",
+    version="1.4.1",
     title="Оценка домашних дел",
     description="Приложение для помощи в оценке домашних дел",
     docs_url=None,
