@@ -80,6 +80,9 @@ class ReportService:
             if condition: break
 
             meta: dict = result.info
+
+            if meta is None: break
+
             step: Decimal = Decimal(meta.get("step", 0))
             count: Decimal = Decimal(meta.get("count", 1))
             percent: Decimal = step * (100/ count)
