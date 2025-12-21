@@ -80,8 +80,6 @@ class ReportService:
 
             meta: dict = result.info
 
-            if meta is None: raise CustomHTTPException(status_code=500, detail=_("An unexpected error has occurred"))
-
             yield f"{(meta.get("step", 0) * (meta.get("count", 1) / 100))}"
 
             await asyncio.sleep(1)
