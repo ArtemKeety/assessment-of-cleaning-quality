@@ -37,8 +37,9 @@ async def get_an_flat(flat_id: int, conn: asyncpg.Connection = Depends(DataBase.
 async def current_report(report_id: int, conn: asyncpg.Connection = Depends(DataBase.from_request_conn)):
     return await ReportService.get_current(report_id, conn)
 
+
 @router.get('/task/{report_id}', response_class=StreamingResponse)
-async def task(report_id: int, request: Request ):
+async def task(report_id: int, request: Request):
     return StreamingResponse(ReportService.task(report_id, request), media_type="text/event-stream")
 
 
