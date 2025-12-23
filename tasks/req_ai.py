@@ -38,7 +38,7 @@ def request_from_ai(self, report_id: int , dirty_photo: list[str], clear_photo: 
     session = requests.Session()
 
     with db() as conn:
-        conn.execute("SELECT * FROM report_part WHERE report_id = %s", (report_id, ))
+        conn.execute("SELECT id FROM report_part WHERE report_id = %s", (report_id, ))
         record = conn.fetchall()
 
         for idx, (d_obj, c_obj) in enumerate(zip(dirty_photo, clear_photo)):
@@ -48,7 +48,6 @@ def request_from_ai(self, report_id: int , dirty_photo: list[str], clear_photo: 
             comm = create_comment(session, clear, dirty)
             image_path = highlight_differences(clear, dirty)
 
-            photos_id, *_ = record[idx]
             conn.execute(
                 """
                     UPDATE report_part SET
@@ -56,7 +55,7 @@ def request_from_ai(self, report_id: int , dirty_photo: list[str], clear_photo: 
                     path = %s
                     WHERE id = %s
                 """,
-                (comm, image_path, photos_id)
+                (comm, image_path, record[idx])
             )
 
             self.update_state(
