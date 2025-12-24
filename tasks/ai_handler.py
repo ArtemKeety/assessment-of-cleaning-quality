@@ -31,6 +31,8 @@ models = (
         'openrouter/bert-nebulon-alpha', # -/+ 5 / last Error
         'google/gemma-3-4b-it:free', # 6
         'google/gemma-3-12b-it:free', # 7
+        "bytedance-seed/seedream-4.5", # 8
+        'google/gemma-3-4b-it:free' # 9
 )
 
 
@@ -50,7 +52,7 @@ def create_comment(s: requests.Session, clear: str, dirty: str):
             "Content-Type": "application/json",
         },
         data=orjson.dumps({
-            "model": models[0],
+            "model": models[9],
             "messages": [
                 {
                     "role": "user", #"system", #"user",
@@ -103,8 +105,6 @@ def create_comment(s: requests.Session, clear: str, dirty: str):
         })
     )
 
-    LOGGER.info("STATUS=%s", response.status_code)
-    LOGGER.info("BODY=%s", response.text[:5000])
     response.raise_for_status()
 
     data = orjson.loads(response.text)
