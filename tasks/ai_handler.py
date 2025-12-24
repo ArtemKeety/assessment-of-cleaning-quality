@@ -102,6 +102,9 @@ def create_comment(s: requests.Session, clear: str, dirty: str):
             },
         })
     )
+
+    LOGGER.info("STATUS=%s", response.status_code)
+    LOGGER.info("BODY=%s", response.text[:5000])
     response.raise_for_status()
 
     data = orjson.loads(response.text)
