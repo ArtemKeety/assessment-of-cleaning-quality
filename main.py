@@ -1,49 +1,28 @@
-import os
 import asyncpg
 import logging
 from fastapi import Depends
 from fastapi import FastAPI
 from granian import Granian
-import redis.asyncio as redis
 from internal.router import *
 from customlogger import LOGGER
 from internal.midleware import *
-from database import DataBase, RedisDb
+from internal.lifespan import LifeSpan
 from granian.constants import Interfaces
-from contextlib import asynccontextmanager
-from fastapi_limiter import FastAPILimiter
 from fastapi.staticfiles import StaticFiles
 from fastapi_limiter.depends import RateLimiter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.exceptions import RequestValidationError
 from fastapi_babel import Babel, BabelConfigs, BabelMiddleware
-from configuration import TIMEOUT, FLAT_FILE_PATH, REPORT_FILE_PATH, RedisConfig, RAW_REPORT_FILE_PATH, WORKERS
-
+from configuration import TIMEOUT, FLAT_FILE_PATH, REPORT_FILE_PATH, RAW_REPORT_FILE_PATH, WORKERS
 
 
 LOGGER.setLevel(logging.INFO)
 
-@asynccontextmanager
-async def lifespan(fastapi: FastAPI):
-    for path in FLAT_FILE_PATH, REPORT_FILE_PATH, RAW_REPORT_FILE_PATH:
-        os.makedirs(path, exist_ok=True)
-    LOGGER.warning("Starting lifespan")
-    fastapi.state.db_pool = await DataBase.connect()
-    fastapi.state.redis_pool = RedisDb()
-    await fastapi.state.db_pool.test_conn()
-    await fastapi.state.redis_pool.ping()
-    await FastAPILimiter.init(redis.from_url(str(RedisConfig()), encoding="utf-8"), identifier=user_address)
-    yield
-    await fastapi.state.db_pool.disconnect()
-    await fastapi.state.redis_pool.disconnect()
-    await FastAPILimiter.close()
-    LOGGER.warning("Ending lifespan")
-
 
 app = FastAPI(
-    lifespan=lifespan,
-    version="1.4.1",
+    lifespan=LifeSpan(FLAT_FILE_PATH, REPORT_FILE_PATH, RAW_REPORT_FILE_PATH),
+    version="1.4.2",
     title="Оценка домашних дел",
     description="Приложение для помощи в оценке домашних дел",
     docs_url=None,
