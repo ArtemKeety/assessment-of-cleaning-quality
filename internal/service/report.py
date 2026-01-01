@@ -23,9 +23,7 @@ class ReportService:
         async with conn.transaction():
             db_photo = await FlatRepo.get_id(flat_id, conn)
 
-            clear_photos: list[str] = [obj.path for obj in db_photo]
-
-            if len(clear_photos) != len(photos):
+            if len(db_photo) != len(photos):
                 raise CustomHTTPException(status_code=400, detail=_("Not equal count photos"))
 
             task: asyncio.Task = asyncio.create_task(download_files(photos, RAW_REPORT_FILE_PATH))
@@ -33,8 +31,6 @@ class ReportService:
             time = datetime.now().astimezone(ZoneInfo("UTC")).replace(tzinfo=None)
 
             report_id = await ReportRepo.add_report_place(flat_id, photos[0].filename, time, conn)
-
-            dirty_photos = [obj.filename for obj in photos]
 
             await ReportRepo.add_report_photo_raw(
                     report_id=report_id,
@@ -45,6 +41,10 @@ class ReportService:
             )
 
         await task
+
+        clear_photos: list[str] = [obj.path for obj in db_photo]
+
+        dirty_photos: list[str] = [obj.filename for obj in photos]
 
         request_from_ai.apply_async(args=(report_id, dirty_photos, clear_photos),  task_id=str(report_id))
 
