@@ -1,6 +1,4 @@
 import os
-import re
-import time
 import requests
 import orjson
 import base64
@@ -36,7 +34,7 @@ models = (
 )
 
 
-@CustomRetry(count=5, max_times=60)
+@CustomRetry(5, 1, 2, requests.RequestException, Exception)
 def create_comment(s: requests.Session, clear: str, dirty: str):
 
     clear_image: base64.b64encode = encoding_file(clear)
