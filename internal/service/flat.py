@@ -14,22 +14,21 @@ class FlatService:
     @staticmethod
     async def add(name: str, user_id: int, photos: list[UploadFile], conn: asyncpg.Connection) -> Flat:
 
-        download_task: asyncio.Task = asyncio.create_task(download_files(photos, FLAT_FILE_PATH))
-
         async with conn.transaction(isolation='serializable'):
 
             if MAX_COUNT <= await FlatRepo.count(user_id, conn):
-                download_task.cancel()
                 raise CustomHTTPException(
                     detail=_("A user cannot have a flat of more than") + f" {MAX_COUNT}",
                     status_code=400,
                 )
 
+            download_task: asyncio.Task = asyncio.create_task(download_files(photos, FLAT_FILE_PATH))
+
             flat_id = await FlatRepo.add_flat(name, user_id, photos[0], conn)
 
             await FlatRepo.add_flat_photo(photos, flat_id, conn)
 
-        await download_task
+            await download_task
 
         return Flat(id=flat_id, name=name, preview=photos[0].filename)
 

@@ -15,6 +15,7 @@ from internal.midleware import CustomHTTPException
 
 
 
+
 class ReportService:
 
     @staticmethod
@@ -40,7 +41,7 @@ class ReportService:
                     conn=conn,
             )
 
-        await task
+            await task
 
         clear_photos: list[str] = [obj.path for obj in db_photo]
 

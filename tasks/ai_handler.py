@@ -34,7 +34,7 @@ models = (
 )
 
 
-@CustomRetry(5, 1, 2, requests.RequestException, Exception)
+@CustomRetry(5, 1, requests.RequestException, Exception)
 def create_comment(s: requests.Session, clear: str, dirty: str):
 
     clear_image: base64.b64encode = encoding_file(clear)
