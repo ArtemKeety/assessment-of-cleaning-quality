@@ -86,7 +86,7 @@ class ReportService:
 
             step: Decimal = Decimal(meta.get("step", 0))
             count: Decimal = Decimal(meta.get("count", 1))
-            percent: Decimal = step * (100/ count)
+            percent: Decimal = step * (100 / count)
 
             yield f"{percent:.2f}\n"
 
