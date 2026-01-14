@@ -7,7 +7,7 @@ class CustomRetry:
 
     __slots__ = ('count', 'delay', 'backoff', 'exceptions')
 
-    def __init__(self, count: int, delay: int = 1, *exc: Exception, **kwargs):
+    def __init__(self, count: int, delay: int = 1, *exc: type[Exception], **kwargs):
         self.count = count
         self.delay = delay
         self.exceptions = exc or (Exception, )
