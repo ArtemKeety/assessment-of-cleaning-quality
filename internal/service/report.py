@@ -4,7 +4,6 @@ from decimal import Decimal
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from tasks import request_from_ai
-from typing import AsyncGenerator
 from dataclasses import dataclass
 from internal.repo import Repository
 from fastapi import UploadFile, Request
