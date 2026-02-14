@@ -9,30 +9,21 @@ from configuration import PsqlConfig
 from contextlib import asynccontextmanager
 
 
-
-
 class DataBase:
+    __slots__ = ("__pool", )
 
-    __slots__ = '__pool',
-
-    def __init__(self, pool: asyncpg.Pool) -> None:
-        self.__pool = pool
-
-    @classmethod
-    async def connect(cls)-> 'DataBase':
-        pool = await asyncpg.create_pool(
-            host=PsqlConfig.host,
-            port=PsqlConfig.port,
-            user=PsqlConfig.user,
-            password=PsqlConfig.password,
-            database=PsqlConfig.database,
-            timeout=PsqlConfig.timeout,
-            max_size=PsqlConfig.max_size,
-            min_size=PsqlConfig.min_size,
+    def __init__(self, config: PsqlConfig) -> None:
+        self.__pool = asyncpg.create_pool(
+            host=config.host,
+            port=config.port,
+            user=config.user,
+            password=config.password,
+            database=config.database,
+            timeout=config.timeout,
+            max_size=config.max_size,
+            min_size=config.min_size,
         )
-        obj = cls(pool)
         LOGGER.info("Connected to database")
-        return obj
 
     async def disconnect(self):
         await self.__pool.close()

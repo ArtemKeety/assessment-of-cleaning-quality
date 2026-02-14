@@ -5,7 +5,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from tasks import request_from_ai
 from dataclasses import dataclass
-from internal.repo import Repository
+from internal.repo import UoWRepository
 from fastapi import UploadFile, Request
 from configuration import RAW_REPORT_FILE_PATH
 from internal.shemas import Report, ReportPath
@@ -15,7 +15,7 @@ from utils import download_files, TaskCondition, get_status
 
 @dataclass(slots=True, frozen=True, init=True)
 class ReportService:
-    repository: Repository
+    repository: UoWRepository
 
     async def add(self, flat_id: int, dirty_photos: list[UploadFile]) -> Report:
 

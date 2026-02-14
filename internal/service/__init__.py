@@ -1,1 +1,1 @@
-from .service import Service
+from .uowservice import UoWService

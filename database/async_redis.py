@@ -12,13 +12,13 @@ class RedisDb:
 
     __slots__ = '__client'
 
-    def __init__(self):
+    def __init__(self, config: RedisConfig):
         self.__client = redis.Redis(
-            host=RedisConfig.host,
-            port=RedisConfig.port,
-            db=RedisConfig.db,
-            decode_responses=RedisConfig.decode_responses,
-            max_connections=RedisConfig.max_connections,
+            host=config.host,
+            port=config.port,
+            db=config.db,
+            decode_responses=config.decode_responses,
+            max_connections=config.max_connections,
         )
 
     async def add(self, key: str, value: dict, exp: int = LIFE_TIME):

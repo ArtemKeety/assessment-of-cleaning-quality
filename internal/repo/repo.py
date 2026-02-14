@@ -1,21 +1,18 @@
 import asyncpg
-
 from .flat import FlatRepo
 from .user import UserRepo
 from .report import ReportRepo
-
-from enum import StrEnum
 from database import DataBase
 from datetime import datetime
-
 from fastapi import UploadFile
 from customlogger import LOGGER
 from contextlib import asynccontextmanager
+from utils.isolation_lvl import TransactionEnum
 from typing import Protocol, Optional, Any, AsyncGenerator
 from internal.shemas import Flat, FullFlat, Report, ReportPath, UserLogin, User
 
 
-class FlatBase(Protocol):
+class IFlatRepo(Protocol):
     async def add_flat(self, name: str, user_id: int, preview: UploadFile) -> int:
         ...
 
@@ -38,7 +35,7 @@ class FlatBase(Protocol):
         ...
 
 
-class ReportBase(Protocol):
+class IRepoReport(Protocol):
     async def add_report_place(self, flat_id: int, path: str, date: datetime) -> int:
         ...
 
@@ -58,7 +55,7 @@ class ReportBase(Protocol):
         ...
 
 
-class UserBase(Protocol):
+class IRepoUser(Protocol):
     async def get_user(self, u: UserLogin) -> Optional[User]:
         ...
 
@@ -69,35 +66,30 @@ class UserBase(Protocol):
         ...
 
 
-class TransactionEnum(StrEnum):
-    serializable = "serializable"
-    repeatable_read = "repeatable_read"
-    read_uncommitted = "read_uncommitted"
-    read_committed = "read_committed"
 
+class UoWRepository:
 
-class Repository:
-
-    __slots__ = 'pool', 'User', 'Flat', 'Report',
+    __slots__ = 'pool','User', 'Flat', 'Report',
 
     def __init__(self, pool: DataBase):
         self.pool: DataBase = pool
-        self.User: Optional[UserBase] = None
-        self.Flat: Optional[FlatBase] = None
-        self.Report: Optional[ReportBase] = None
+        self.User: Optional[IRepoUser] = None
+        self.Flat: Optional[IFlatRepo] = None
+        self.Report: Optional[IRepoReport] = None
 
     def init_repo(self, conn: asyncpg.Connection):
-        self.User: Optional[UserBase] = UserRepo(conn)
-        self.Flat: Optional[FlatBase] = FlatRepo(conn)
-        self.Report: Optional[ReportBase] = ReportRepo(conn)
+        self.User: Optional[IRepoUser] = UserRepo(conn)
+        self.Flat: Optional[IFlatRepo] = FlatRepo(conn)
+        self.Report: Optional[IRepoReport] = ReportRepo(conn)
 
     def clear_repo(self):
-        self.User: Optional[UserBase] = None
-        self.Flat: Optional[FlatBase] = None
-        self.Report: Optional[ReportBase] = None
+        self.User: Optional[IRepoUser] = None
+        self.Flat: Optional[IFlatRepo] = None
+        self.Report: Optional[IRepoReport] = None
 
-    @asynccontextmanager # Todo need fix
-    async def transaction(self, tr: str = "read_committed") -> AsyncGenerator['Repository', Any]:
+
+    @asynccontextmanager
+    async def transaction(self, tr: str = "read_committed") -> AsyncGenerator['UoWRepository', Any]:
         async with self.pool.acquire() as conn:
             async with conn.transaction(isolation=TransactionEnum(tr)):
                 try:
@@ -108,4 +100,6 @@ class Repository:
                     raise
                 finally:
                     self.clear_repo()
+
+
 

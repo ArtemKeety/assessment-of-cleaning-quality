@@ -1,3 +1,3 @@
 
-from .repo import Repository
+from .repo import UoWRepository
 

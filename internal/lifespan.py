@@ -2,13 +2,15 @@ import os
 import redis.asyncio as redis
 from fastapi import FastAPI
 from customlogger import LOGGER
-from internal.repo import Repository
-from internal.service import Service
+from configuration import PsqlConfig
+from internal.repo import UoWRepository
+from internal.service import UoWService
 from configuration import RedisConfig
 from database import RedisDb, DataBase
 from fastapi_limiter import FastAPILimiter
 from contextlib import asynccontextmanager
 from internal.midleware import user_address
+
 
 class LifeSpan:
 
@@ -26,15 +28,18 @@ class LifeSpan:
     async def __startup(self, app: FastAPI):
         self.__create_folder()
         LOGGER.warning("Starting lifespan")
-        db_pool = await DataBase.connect()
-        repo = Repository(db_pool)
-        service = Service(repo)
+
+        db_pool = DataBase(PsqlConfig())
+        repo = UoWRepository(db_pool)
+        service = UoWService(repo)
 
         app.state.service = service
         app.state.db_pool = db_pool
-        app.state.redis_pool = RedisDb()
+
+        redis_config = RedisConfig()
+        app.state.redis_pool = RedisDb(redis_config)
         await app.state.redis_pool.ping()
-        await FastAPILimiter.init(redis.from_url(str(RedisConfig()), encoding="utf-8"), identifier=user_address)
+        await FastAPILimiter.init(redis.from_url(str(redis_config), encoding="utf-8"), identifier=user_address)
 
 
     @staticmethod

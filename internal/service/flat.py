@@ -3,7 +3,7 @@ from fastapi_babel import _
 from fastapi import UploadFile
 from utils import download_files
 from dataclasses import dataclass
-from internal.repo import Repository
+from internal.repo import UoWRepository
 from internal.shemas import Flat, FullFlat
 from internal.midleware import CustomHTTPException
 from configuration import FLAT_FILE_PATH, MAX_COUNT
@@ -11,7 +11,7 @@ from configuration import FLAT_FILE_PATH, MAX_COUNT
 
 @dataclass(init=True, slots=True, frozen=True)
 class FlatService:
-    repository: Repository
+    repository: UoWRepository
 
     async def add(self, name: str, user_id: int, photos: list[UploadFile]) -> Flat:
 

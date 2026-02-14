@@ -3,12 +3,12 @@ from database import RedisDb
 from .user import UserService
 from .flat import FlatService
 from .report import ReportService
-from internal.repo import Repository
+from internal.repo import UoWRepository
 from fastapi import UploadFile, Request
 from internal.shemas import Flat, FullFlat, Report, ReportPath, UserRegister, Session, UserLogin
 
 
-class FlatBase(Protocol):
+class IServiceFlat(Protocol):
 
     async def add(self, name: str, user_id: int, photos: list[UploadFile]) -> Flat:
         ...
@@ -23,7 +23,7 @@ class FlatBase(Protocol):
         ...
 
 
-class ReportBase(Protocol):
+class IServiceReport(Protocol):
 
     async def add(self, flat_id: int, dirty_photos: list[UploadFile]) -> Report:
         ...
@@ -45,7 +45,7 @@ class ReportBase(Protocol):
         ...
 
 
-class UserBase(Protocol):
+class IServiceUser(Protocol):
 
     async def sign_up(self, u: UserRegister, agent: str, redis: RedisDb) -> Session:
         ...
@@ -57,14 +57,14 @@ class UserBase(Protocol):
         ...
 
 
-class Service:
+class UoWService:
     __slots__ = ('User', 'Flat', 'Report')
 
-    def __init__(self, repo: Repository):
-        self.User: UserBase = UserService(repo)
-        self.Flat: FlatBase = FlatService(repo)
-        self.Report: ReportBase = ReportService(repo)
+    def __init__(self, repo: UoWRepository):
+        self.User: IServiceUser = UserService(repo)
+        self.Flat: IServiceFlat = FlatService(repo)
+        self.Report: IServiceReport = ReportService(repo)
 
     @staticmethod
-    async def from_request(request: Request) -> 'Service':
+    async def from_request(request: Request) -> 'UoWService':
         return request.app.state.service
