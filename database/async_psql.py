@@ -1,12 +1,10 @@
-
-
-
 import asyncpg
-
 from customlogger import LOGGER
-from typing import AsyncGenerator, Optional
+from utils import TransactionEnum
 from configuration import PsqlConfig
+from typing import AsyncGenerator, Any
 from contextlib import asynccontextmanager
+
 
 
 class DataBase:
@@ -37,15 +35,24 @@ class DataBase:
         LOGGER.info("Disconnected to database")
 
     @asynccontextmanager
-    async def acquire(self)-> AsyncGenerator[asyncpg.Connection, None]:
+    async def session(self) -> AsyncGenerator[asyncpg.Connection, None]:
         async with self.__pool.acquire() as conn:
             yield conn
 
-    async def connection(self) -> asyncpg.Connection:
-        return await self.__pool.acquire()
+    @asynccontextmanager
+    async def transaction(self, tr: TransactionEnum) -> AsyncGenerator['asyncpg.Connection', Any]:
+        async with self.__pool.acquire() as conn:
+            async with conn.transaction(isolation=tr):
+                try:
+                    yield conn
+                except Exception as e:
+                    LOGGER.warning(f"{type(e).__name__}: {e}")
+                    raise
 
-    async def close(self, conn: asyncpg.Connection) -> None:
-        await self.__pool.release(conn)
+
+
+
+
 
 
 

@@ -2,7 +2,7 @@
 import os
 import time
 import requests
-from database import SyncPsql
+from database.sync_psql import SyncPsql
 from customlogger import LOGGER
 from celery_app import celery_app
 from .ai_handler import create_comment

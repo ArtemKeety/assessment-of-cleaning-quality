@@ -3,7 +3,7 @@ import pytest
 from internal.midleware import CustomHTTPException
 from internal.shemas import Flat, FullFlat
 
-from internal.repo.flat import FlatRepo  # <-- поправь путь (пример)
+from internal.repository.flat import FlatRepo  # <-- поправь путь (пример)
 
 
 # --------- helpers ---------
@@ -48,7 +48,7 @@ class FakeConn:
 @pytest.fixture(autouse=True)
 def disable_babel(monkeypatch):
     # ВАЖНО: здесь monkeypatch-им "_" в модуле, где объявлен FlatRepo
-    import internal.repo.flat as flat_repo_module  # <-- поправь под свой модуль
+    import internal.repository.flat as flat_repo_module  # <-- поправь под свой модуль
     monkeypatch.setattr(flat_repo_module, "_", lambda s: s)
 
 

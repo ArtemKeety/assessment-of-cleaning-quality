@@ -1,9 +1,9 @@
 from database import RedisDb
-from internal.service import UoWService
 from fastapi import APIRouter, Depends, Response
-from internal.midleware import get_header_data, user_identy
 from internal.shemas import UserRegister, UserLogin, Session
 from configuration import LIFE_TIME, HTTP_ONLY, SECURE_CONNECTION
+from internal.midleware import get_header_data, user_identy
+from internal.layer import Layer
 
 
 router = APIRouter(prefix="/user")
@@ -14,7 +14,7 @@ async def sign_up(
         r: UserRegister,
         res: Response,
         agent: str = Depends(get_header_data),
-        service = Depends(UoWService.from_request),
+        service = Depends(Layer()),
         redis: RedisDb = Depends(RedisDb.from_request_conn)
 )-> Session:
     s: Session = await service.User.sign_up(r, agent, redis)
@@ -33,7 +33,7 @@ async def sign_in(
         u: UserLogin,
         res: Response,
         agent: str = Depends(get_header_data),
-        service = Depends(UoWService.from_request),
+        service = Depends(Layer()),
         redis: RedisDb = Depends(RedisDb.from_request_conn)
 )-> Session:
     s: Session = await service.User.sign_in(u, agent, redis)
@@ -63,7 +63,7 @@ async def delete(
         res: Response,
         redis: RedisDb = Depends(RedisDb.from_request_conn),
         user_data = Depends(user_identy),
-        service = Depends(UoWService.from_request),
+        service = Depends(Layer()),
 ):
     await redis.delete(user_data.get('session'))
     res.delete_cookie('session')

@@ -2,7 +2,7 @@ import asyncpg
 from typing import Optional
 from fastapi_babel import _
 from dataclasses import dataclass
-from internal.shemas import UserLogin, User
+from internal.shemas.user import UserLogin, User
 from internal.midleware import CustomHTTPException
 
 

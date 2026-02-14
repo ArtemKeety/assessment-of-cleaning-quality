@@ -3,24 +3,23 @@ from utils import Password
 from fastapi_babel import _
 from database import RedisDb
 from dataclasses import dataclass
-from internal.repo import UoWRepository
+from internal.repository import Repository
 from internal.midleware import CustomHTTPException
 from internal.shemas import UserRegister, UserLogin, Session
 
 @dataclass(slots=True, frozen=True, init=True)
 class UserService:
-    repository: UoWRepository
+    repository: Repository
 
     async def sign_up(self, u: UserRegister, agent: str, redis: RedisDb) -> Session:
-        async with self.repository.transaction() as repo:
 
-            if await repo.User.get_user(u):
-                raise CustomHTTPException(status_code=409, detail=_("User already exists"))
+        if await self.repository.User.get_user(u):
+            raise CustomHTTPException(status_code=409, detail=_("User already exists"))
 
-            u.password = Password.hash_password(u.password)
+        u.password = Password.hash_password(u.password)
 
-            if not (user_id := await repo.User.add_user(u)):
-                raise CustomHTTPException(status_code=501, detail=_("Error adding user"))
+        if not (user_id := await self.repository.User.add_user(u)):
+            raise CustomHTTPException(status_code=501, detail=_("Error adding user"))
 
         session: str = f"{u.password}.{user_id}.{uuid.uuid4()}"
 
@@ -30,9 +29,9 @@ class UserService:
 
 
     async def sign_in(self, u: UserLogin, agent:str, redis: RedisDb) -> Session:
-        async with self.repository as repo:
-            if not (user := await repo.User.get_user(u)):
-                raise CustomHTTPException(status_code=400, detail=_("Error getting user"))
+
+        if not (user := await self.repository.User.get_user(u)):
+            raise CustomHTTPException(status_code=400, detail=_("Error getting user"))
 
         if not Password.verify(user.password, u.password):
             raise CustomHTTPException(status_code=400, detail=_("Error verifying password"))
@@ -45,5 +44,4 @@ class UserService:
 
 
     async def del_user(self, user_id : int) -> int:
-        async with self.repository as repo:
-            return await repo.User.del_user(user_id)
+        return await self.repository.User.del_user(user_id)

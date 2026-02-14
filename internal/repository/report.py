@@ -48,7 +48,6 @@ class ReportRepo:
         return []
 
 
-
     async def get_an_flat(self, flat_id: int) -> list[Report]:
         if res := await self.conn.fetch(
           "select * from report where flat_id = $1",

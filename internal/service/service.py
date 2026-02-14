@@ -3,7 +3,7 @@ from database import RedisDb
 from .user import UserService
 from .flat import FlatService
 from .report import ReportService
-from internal.repo import UoWRepository
+from internal.repository import Repository
 from fastapi import UploadFile, Request
 from internal.shemas import Flat, FullFlat, Report, ReportPath, UserRegister, Session, UserLogin
 
@@ -57,14 +57,11 @@ class IServiceUser(Protocol):
         ...
 
 
-class UoWService:
+class Service:
     __slots__ = ('User', 'Flat', 'Report')
 
-    def __init__(self, repo: UoWRepository):
+    def __init__(self, repo: Repository):
         self.User: IServiceUser = UserService(repo)
         self.Flat: IServiceFlat = FlatService(repo)
         self.Report: IServiceReport = ReportService(repo)
 
-    @staticmethod
-    async def from_request(request: Request) -> 'UoWService':
-        return request.app.state.service
