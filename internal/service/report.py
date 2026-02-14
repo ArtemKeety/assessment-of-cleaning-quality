@@ -53,26 +53,23 @@ class ReportService:
 
     async def get_reports(self, user_id: int) -> list[Report]:
         async with self.repository.transaction() as repo:
-            res: list[Report] = await repo.Report.get_reports(user_id)
-        return res
+            return await repo.Report.get_reports(user_id)
 
 
     async def get_an_flat(self, flat_id: int) -> list[Report]:
         async with self.repository.transaction() as repo:
-            res: list[Report] = await repo.Report.get_an_flat(flat_id)
-        return res
+            return await repo.Report.get_an_flat(flat_id)
 
 
     async def get_current(self, report_id: int) -> list[ReportPath]:
         async with self.repository.transaction() as repo:
-            res: list[ReportPath] = await repo.Report.get_current(report_id)
-        return res
+            return await repo.Report.get_current(report_id)
+
 
 
     async def delete_report(self, report_id: int) -> int:
         async with self.repository.transaction() as repo:
-            res: int = await repo.Report.delete_report(report_id)
-        return res
+            return await repo.Report.delete_report(report_id)
 
 
     @staticmethod

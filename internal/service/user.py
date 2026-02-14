@@ -46,5 +46,4 @@ class UserService:
 
     async def del_user(self, user_id : int) -> int:
         async with self.repository.transaction() as repo:
-            res: int = await repo.User.get_user(user_id)
-        return res
+            return await repo.User.get_user(user_id)

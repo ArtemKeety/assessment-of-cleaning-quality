@@ -13,5 +13,8 @@ __all__ = (
     'LogMiddleware',
     'TimeoutMiddleware',
     'user_address',
-    'swagger_auth'
+    'swagger_auth',
+    'user_identy',
+    'ValidateFiles',
+    'CustomRateLimit',
 )
