@@ -1,5 +1,5 @@
 import orjson
-from typing import Optional
+from typing import Optional, Any, AsyncGenerator
 from fastapi import Request
 import redis.asyncio as redis
 from customlogger import LOGGER
@@ -48,7 +48,7 @@ class RedisDb:
         return request.app.state.redis_pool
 
     @asynccontextmanager
-    async def pipeLine(self, transaction: bool=False)-> Pipeline:
+    async def pipe_line(self, transaction: bool=False)-> AsyncGenerator[Pipeline, Any]:
         async with self.__client.pipeline(transaction=transaction) as pipe:
             yield pipe
 

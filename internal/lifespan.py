@@ -1,4 +1,6 @@
 import os
+from internal.repo import Repository
+from internal.service import Service
 from fastapi import FastAPI
 import redis.asyncio as redis
 from customlogger import LOGGER
@@ -24,9 +26,13 @@ class LifeSpan:
     async def __startup(self, app: FastAPI):
         self.__create_folder()
         LOGGER.warning("Starting lifespan")
-        app.state.db_pool = await DataBase.connect()
+        db_pool = await DataBase.connect()
+        repo = Repository(db_pool)
+        service = Service(repo)
+
+        app.state.service = service
+        app.state.db_pool = db_pool
         app.state.redis_pool = RedisDb()
-        await app.state.db_pool.test_conn()
         await app.state.redis_pool.ping()
         await FastAPILimiter.init(redis.from_url(str(RedisConfig()), encoding="utf-8"), identifier=user_address)
 

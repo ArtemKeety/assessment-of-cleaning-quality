@@ -1,3 +1,3 @@
-from .user import UserRepo
-from .flat import FlatRepo
-from .report import ReportRepo
+
+from .repo import Repository
+

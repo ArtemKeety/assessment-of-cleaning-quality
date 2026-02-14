@@ -23,14 +23,14 @@ __path_for_flat = os.path.join(__pathBase, "flat")
     ignore_result=True,
     autoretry_for=(requests.RequestException,)
 )
-def request_from_ai(self, report_id: int , dirty_photo: list[str], clear_photo: list[str]):
+def request_from_ai(self, report_id: int , photos: tuple[tuple[str,str], ...]): #dirty_photo: list[str], clear_photo: list[str]
     LOGGER.info("celery is starting")
 
     self.update_state(
         state="PROGRESS",
         meta={
             "step":0,
-            "count":len(dirty_photo),
+            "count":len(photos),
         }
     )
     db = SyncPsql()
@@ -41,9 +41,9 @@ def request_from_ai(self, report_id: int , dirty_photo: list[str], clear_photo: 
         conn.execute("SELECT id FROM report_part WHERE report_id = %s", (report_id, ))
         record = conn.fetchall()
 
-        for idx, (d_obj, c_obj) in enumerate(zip(dirty_photo, clear_photo)):
-            dirty = os.path.join(__path_for_raw_report, d_obj)
-            clear = os.path.join(__path_for_flat, c_obj)
+        for idx, (dirty_photo, clear_photo) in enumerate(photos):
+            dirty = os.path.join(__path_for_raw_report, dirty_photo)
+            clear = os.path.join(__path_for_flat, clear_photo)
 
             comm = create_comment(session, clear, dirty)
             image_path = highlight_differences(clear, dirty)
@@ -62,7 +62,7 @@ def request_from_ai(self, report_id: int , dirty_photo: list[str], clear_photo: 
                 state="PROGRESS",
                 meta={
                     "step": idx+1,
-                    "count": len(dirty_photo),
+                    "count": len(photos),
                 }
             )
 
@@ -71,8 +71,8 @@ def request_from_ai(self, report_id: int , dirty_photo: list[str], clear_photo: 
     self.update_state(
         state="SUCCESS",
         meta={
-            "step": len(dirty_photo),
-            "count": len(dirty_photo),
+            "step": len(photos),
+            "count": len(photos),
         }
     )
 

@@ -1,6 +1,4 @@
-import asyncpg
-from database import DataBase
-from internal.service import ReportService
+from internal.service import Service
 from internal.shemas import Report, ReportPath
 from fastapi.responses import StreamingResponse
 from fastapi import APIRouter, UploadFile, Depends, Body, Request
@@ -14,14 +12,14 @@ router = APIRouter(prefix="/report")
 async def add(
         flat_id: int = Body(),
         photos: list[UploadFile]=Depends(ValidateFiles()),
-        conn: asyncpg.Connection = Depends(DataBase.from_request_conn),
+        service = Depends(Service.from_request),
 ):
-    return await ReportService.add(flat_id, photos, conn)
+    return await service.Report.add(flat_id, photos)
 
 
 @router.get("/all", response_model=list[Report], description="Запросить все отчёты у пользователя")
-async def reports(user_data = Depends(user_identy), conn: asyncpg.Connection = Depends(DataBase.from_request_conn)):
-    return await ReportService.get_reports(user_data.get("user_id"), conn)
+async def reports(user_data = Depends(user_identy), service = Depends(Service.from_request)):
+    return await service.Report.get_reports(user_data.get("user_id"))
 
 
 @router.get("/flat/{flat_id}",
@@ -29,20 +27,20 @@ async def reports(user_data = Depends(user_identy), conn: asyncpg.Connection = D
     description="Запросить все отчёты по квартире",
     dependencies=[Depends(user_identy)]
 )
-async def get_an_flat(flat_id: int, conn: asyncpg.Connection = Depends(DataBase.from_request_conn)):
-    return await ReportService.get_an_flat(flat_id, conn)
+async def get_an_flat(flat_id: int, service = Depends(Service.from_request)):
+    return await service.Report.get_an_flat(flat_id)
 
 
 @router.get('/{report_id}', response_model=list[ReportPath], description="Показать полность отчёт по id")
-async def current_report(report_id: int, conn: asyncpg.Connection = Depends(DataBase.from_request_conn)):
-    return await ReportService.get_current(report_id, conn)
+async def current_report(report_id: int, service = Depends(Service.from_request)):
+    return await service.Report.get_current(report_id)
 
 
 @router.get('/task/{report_id}', response_class=StreamingResponse)
-async def task(report_id: int, request: Request):
-    return StreamingResponse(ReportService.task(report_id, request), media_type="text/event-stream")
+async def task(report_id: int, request: Request, service = Depends(Service.from_request)):
+    return StreamingResponse(service.Report.task(report_id, request), media_type="text/event-stream")
 
 
 @router.delete('/{report_id}', response_model=int, dependencies=[Depends(user_identy)])
-async def del_report(report_id: int, conn: asyncpg.Connection = Depends(DataBase.from_request_conn)):
-    return await ReportService.delete_report(report_id, conn)
+async def del_report(report_id: int, service = Depends(Service.from_request)):
+    return await service.Report.delete_report(report_id)

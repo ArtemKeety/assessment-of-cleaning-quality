@@ -1,3 +1,5 @@
 celery -A celery_app worker --concurrency=1 -l info -P solo
 
 celery -A celery_app flower
+
+curl.exe --no-buffer http://localhost:8081/status/simulations/Other:test_flower_3

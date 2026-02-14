@@ -2,23 +2,25 @@ import uuid
 from utils import Password
 from fastapi_babel import _
 from database import RedisDb
-from asyncpg import Connection
-from internal.repo import UserRepo
+from dataclasses import dataclass
+from internal.repo import Repository
 from internal.midleware import CustomHTTPException
 from internal.shemas import UserRegister, UserLogin, Session
 
-
+@dataclass(slots=True, frozen=True, init=True)
 class UserService:
+    repository: Repository
 
-    @staticmethod
-    async def sign_up(u: UserRegister, agent: str, redis: RedisDb, conn: Connection) -> Session:
-        if await UserRepo.get_user(u, conn):
-            raise CustomHTTPException(status_code=409, detail=_("User already exists"))
+    async def sign_up(self, u: UserRegister, agent: str, redis: RedisDb) -> Session:
+        async with self.repository.transaction() as repo:
 
-        u.password = Password.hash_password(u.password)
+            if await repo.User.get_user(u):
+                raise CustomHTTPException(status_code=409, detail=_("User already exists"))
 
-        if not (user_id := await UserRepo.add_user(u, conn)):
-            raise CustomHTTPException(status_code=501, detail=_("Error adding user"))
+            u.password = Password.hash_password(u.password)
+
+            if not (user_id := await repo.User.add_user(u)):
+                raise CustomHTTPException(status_code=501, detail=_("Error adding user"))
 
         session: str = f"{u.password}.{user_id}.{uuid.uuid4()}"
 
@@ -27,10 +29,10 @@ class UserService:
         return Session(session=session)
 
 
-    @staticmethod
-    async def sign_in(u: UserLogin, agent:str, redis: RedisDb, conn: Connection) -> Session:
-        if not (user := await UserRepo.get_user(u, conn)):
-            raise CustomHTTPException(status_code=400, detail=_("Error getting user"))
+    async def sign_in(self, u: UserLogin, agent:str, redis: RedisDb) -> Session:
+        async with self.repository.transaction() as repo:
+            if not (user := await repo.User.get_user(u)):
+                raise CustomHTTPException(status_code=400, detail=_("Error getting user"))
 
         if not Password.verify(user.password, u.password):
             raise CustomHTTPException(status_code=400, detail=_("Error verifying password"))
@@ -42,6 +44,7 @@ class UserService:
         return Session(session=session)
 
 
-    @staticmethod
-    async def del_user(user_id : int, conn: Connection) -> int:
-        return await UserRepo.del_user(user_id, conn)
+    async def del_user(self, user_id : int) -> int:
+        async with self.repository.transaction() as repo:
+            res: int = await repo.User.get_user(user_id)
+        return res

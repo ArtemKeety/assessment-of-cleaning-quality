@@ -5,23 +5,22 @@ from decimal import Decimal
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from tasks import request_from_ai
+from dataclasses import dataclass
+from internal.repo import Repository
 from fastapi import UploadFile, Request
 from configuration import RAW_REPORT_FILE_PATH
 from internal.shemas import Report, ReportPath
-from internal.repo import ReportRepo, FlatRepo
 from internal.midleware import CustomHTTPException
 from utils import download_files, TaskCondition, get_status
 
-
-
-
+@dataclass(slots=True, frozen=True, init=True)
 class ReportService:
+    repository: Repository
 
-    @staticmethod
-    async def add(flat_id: int, dirty_photos: list[UploadFile], conn: asyncpg.Connection) -> Report:
+    async def add(self, flat_id: int, dirty_photos: list[UploadFile]) -> Report:
 
-        async with conn.transaction():
-            clear_photos = await FlatRepo.get_id(flat_id, conn)
+        async with self.repository.transaction() as repo:
+            clear_photos = await repo.Flat.get_id(flat_id)
 
             if len(clear_photos) != len(dirty_photos):
                 raise CustomHTTPException(status_code=400, detail=_("Not equal count photos"))
@@ -30,41 +29,51 @@ class ReportService:
 
             time = datetime.now().astimezone(ZoneInfo("UTC")).replace(tzinfo=None)
 
-            report_id = await ReportRepo.add_report_place(flat_id, dirty_photos[0].filename, time, conn)
+            report_id = await repo.Report.add_report_place(flat_id, dirty_photos[0].filename, time)
 
-            await ReportRepo.add_report_photo_raw(
+            await repo.Report.add_report_photo_raw(
                     report_id=report_id,
                     info="Нейросесть обрабатывает запрос, подождите....",
                     photo="default.gif",
                     count=len(dirty_photos),
-                    conn=conn,
             )
 
             await task
 
+        photos = [(dirty_obj.filename, clear_obj.path) for dirty_obj, clear_obj in zip(dirty_photos, clear_photos)]
+
         await asyncio.to_thread(
             request_from_ai.apply_async,
-            (report_id, [obj.filename for obj in dirty_photos], [obj.path for obj in clear_photos]),
+            (report_id, tuple(photos)),
             task_id=str(report_id)
         )
 
         return Report(id=report_id, flat_id=flat_id, preview=dirty_photos[0].filename, date=time)
 
-    @staticmethod
-    async def get_reports(user_id: int, conn: asyncpg.Connection) -> list[Report]:
-        return await ReportRepo.get_reports(user_id, conn)
 
-    @staticmethod
-    async def get_an_flat(flat_id: int, conn: asyncpg.Connection) -> list[Report]:
-        return await ReportRepo.get_an_flat(flat_id, conn)
+    async def get_reports(self, user_id: int) -> list[Report]:
+        async with self.repository.transaction() as repo:
+            res: list[Report] = await repo.Report.get_reports(user_id)
+        return res
 
-    @staticmethod
-    async def get_current(report_id: int, conn: asyncpg.Connection) -> list[ReportPath]:
-        return await ReportRepo.get_current(report_id, conn)
 
-    @staticmethod
-    async def delete_report(report_id: int, conn: asyncpg.Connection) -> int:
-        return await ReportRepo.del_report(report_id, conn)
+    async def get_an_flat(self, flat_id: int) -> list[Report]:
+        async with self.repository.transaction() as repo:
+            res: list[Report] = await repo.Report.get_an_flat(flat_id)
+        return res
+
+
+    async def get_current(self, report_id: int) -> list[ReportPath]:
+        async with self.repository.transaction() as repo:
+            res: list[ReportPath] = await repo.Report.get_current(report_id)
+        return res
+
+
+    async def delete_report(self, report_id: int) -> int:
+        async with self.repository.transaction() as repo:
+            res: int = await repo.Report.delete_report(report_id)
+        return res
+
 
     @staticmethod
     async def task(report_id: int, request: Request):
