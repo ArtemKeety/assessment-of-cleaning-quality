@@ -30,7 +30,6 @@ class LifeSpan:
         LOGGER.warning("Starting lifespan")
 
         db_pool = await DataBase.ainit(PsqlConfig())
-
         repo = UoWRepository(db_pool)
         service = UoWService(repo)
 
