@@ -32,11 +32,19 @@ services:
       - app-network
 
   celery-worker:
-    build:
-      context: .
-      dockerfile: Dockerfile.celery
-    command: >
-      sh -c "celery -A celery_app worker --loglevel=info"
+    image: web-simulations:dev
+    restart: always
+    command: [
+      "celery","-A","celery_app","worker",
+      "--loglevel=info",
+      "--pool=prefork",
+      "--concurrency=4",
+      "--prefetch-multiplier=1",
+      "--queues=celery",
+      "--hostname=worker@%h",
+      "--without-mingle",
+      "--without-gossip"
+    ]
     volumes:
       - ./static:/app/static
     environment:
