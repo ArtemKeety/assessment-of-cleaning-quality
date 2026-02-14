@@ -1,9 +1,9 @@
 import os
+import redis.asyncio as redis
+from fastapi import FastAPI
+from customlogger import LOGGER
 from internal.repo import Repository
 from internal.service import Service
-from fastapi import FastAPI
-import redis.asyncio as redis
-from customlogger import LOGGER
 from configuration import RedisConfig
 from database import RedisDb, DataBase
 from fastapi_limiter import FastAPILimiter

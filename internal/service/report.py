@@ -1,10 +1,10 @@
 import asyncio
-import asyncpg
 from fastapi_babel import _
 from decimal import Decimal
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from tasks import request_from_ai
+from typing import AsyncGenerator
 from dataclasses import dataclass
 from internal.repo import Repository
 from fastapi import UploadFile, Request
@@ -12,6 +12,7 @@ from configuration import RAW_REPORT_FILE_PATH
 from internal.shemas import Report, ReportPath
 from internal.midleware import CustomHTTPException
 from utils import download_files, TaskCondition, get_status
+
 
 @dataclass(slots=True, frozen=True, init=True)
 class ReportService:
@@ -76,7 +77,7 @@ class ReportService:
 
 
     @staticmethod
-    async def task(report_id: int, request: Request):
+    async def task(report_id: int, request: Request)-> AsyncGenerator[str, None]:
 
         while not await request.is_disconnected():
 
