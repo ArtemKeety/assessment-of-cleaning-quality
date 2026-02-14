@@ -40,5 +40,5 @@ class FlatService:
         return await self.repository.Flat.get_id(flat_id)
 
 
-    async def delete(self, flat_id: int) -> int:
+    async def delete(self, flat_id: int) -> None:
         return await self.repository.Flat.delete(flat_id)

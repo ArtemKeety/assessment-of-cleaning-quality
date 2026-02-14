@@ -25,13 +25,11 @@ class ReportRepo:
             await req.fetchval(report_id, info, photo)
 
 
-    async def del_report(self, report_id: int) -> int:
-        if res := await self.conn.fetchval(
+    async def del_report(self, report_id: int) -> None:
+        await self.conn.fetchval(
             "DELETE FROM report WHERE id = $1 RETURNING id",
             report_id,
-        ):
-            return res
-        raise CustomHTTPException(status_code=404, detail=_("Error deleting report"))
+        )
 
 
     async def get_reports(self, user_id:int) -> list[Report]:

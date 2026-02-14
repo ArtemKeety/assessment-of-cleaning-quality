@@ -26,13 +26,11 @@ class FlatRepo:
             await req.fetchval(photo.filename, flat_id)
 
 
-    async def delete(self, flat_id: int) -> int:
-        if res := await self.conn.fetchval(
+    async def delete(self, flat_id: int) -> None:
+        await self.conn.fetchval(
             "DELETE FROM flat WHERE id = $1 RETURNING id",
                 flat_id
-        ):
-            return res
-        raise CustomHTTPException(status_code=404, detail=_("Error in deleting flat"))
+        )
 
 
     async def all(self, user_id: int) -> list[Flat]:

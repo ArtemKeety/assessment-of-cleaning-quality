@@ -41,6 +41,6 @@ async def task(report_id: int, request: Request, service = Depends(Layer())):
     return StreamingResponse(service.Report.task(report_id, request), media_type="text/event-stream")
 
 
-@router.delete('/{report_id}', response_model=int, dependencies=[Depends(user_identy)])
+@router.delete('/{report_id}', response_model=None, dependencies=[Depends(user_identy)], status_code=204)
 async def del_report(report_id: int, service = Depends(Layer())):
     return await service.Report.delete_report(report_id)

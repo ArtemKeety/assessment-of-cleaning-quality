@@ -19,7 +19,7 @@ class IServiceFlat(Protocol):
     async def get_id(self, flat_id: int) -> list[FullFlat]:
         ...
 
-    async def delete(self, flat_id: int) -> int:
+    async def delete(self, flat_id: int) -> None:
         ...
 
 
@@ -37,7 +37,7 @@ class IServiceReport(Protocol):
     async def get_current(self, report_id: int) -> list[ReportPath]:
         ...
 
-    async def delete_report(self, report_id: int) -> int:
+    async def delete_report(self, report_id: int) -> None:
         ...
 
     @staticmethod
@@ -53,7 +53,7 @@ class IServiceUser(Protocol):
     async def sign_in(self, u: UserLogin, agent: str, redis: RedisDb) -> Session:
         ...
 
-    async def del_user(self, user_id: int) -> int:
+    async def del_user(self, user_id: int) -> None:
         ...
 
 

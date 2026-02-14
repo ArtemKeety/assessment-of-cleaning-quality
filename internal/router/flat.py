@@ -25,6 +25,6 @@ async def get_flats(user_data = Depends(user_identy), service = Depends(Layer())
 async def get_id(flat_id: int, service = Depends(Layer())):
     return await service.Flat.get_id(flat_id)
 
-@router.delete('/{flat_id}',response_model=int, dependencies=[Depends(user_identy)])
+@router.delete('/{flat_id}',response_model=None, dependencies=[Depends(user_identy)], status_code=204)
 async def delete(flat_id: int, service = Depends(Layer())):
     return await service.Flat.delete(flat_id)

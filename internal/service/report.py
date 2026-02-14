@@ -62,7 +62,7 @@ class ReportService:
         return await self.repository.Report.get_current(report_id)
 
 
-    async def delete_report(self, report_id: int) -> int:
+    async def delete_report(self, report_id: int) -> None:
         return await self.repository.Report.del_report(report_id)
 
 

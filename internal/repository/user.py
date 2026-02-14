@@ -27,10 +27,8 @@ class UserRepo:
         )
 
 
-    async def del_user(self, user_id : int) -> int:
-        if res := await self.conn.fetchval(
+    async def del_user(self, user_id : int) -> None:
+        await self.conn.fetchval(
             "Update users Set is_active = $1 where id = $2 returning id",
             False, user_id
-        ):
-            return res
-        raise CustomHTTPException(detail=_("Error in deleting user"), status_code=501)
+        )
