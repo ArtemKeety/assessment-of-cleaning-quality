@@ -1,7 +1,7 @@
 import base64
 
 
-def encoding_file(file: str)-> base64.b64encode:
+def encoding_file(file: str)-> str:
     with open(file, "rb") as f:
         array = []
         while chunk := f.read(1024 * 1024):

@@ -69,13 +69,14 @@ class IRepoUser(Protocol):
 
 class UoWRepository:
 
-    __slots__ = 'pool','User', 'Flat', 'Report',
+    __slots__ = 'pool', 'conn','User', 'Flat', 'Report',
 
     def __init__(self, pool: DataBase):
         self.pool: DataBase = pool
         self.User: Optional[IRepoUser] = None
         self.Flat: Optional[IFlatRepo] = None
         self.Report: Optional[IRepoReport] = None
+        self.conn: Optional[asyncpg.Connection] = None
 
     def init_repo(self, conn: asyncpg.Connection):
         self.User: Optional[IRepoUser] = UserRepo(conn)
@@ -86,6 +87,7 @@ class UoWRepository:
         self.User: Optional[IRepoUser] = None
         self.Flat: Optional[IFlatRepo] = None
         self.Report: Optional[IRepoReport] = None
+        self.conn: Optional[asyncpg.Connection] = None
 
 
     @asynccontextmanager
@@ -102,4 +104,21 @@ class UoWRepository:
                     self.clear_repo()
 
 
+    async def __aenter__(self) -> 'UoWRepository':
+        self.conn = await self.pool.connection()
+        self.init_repo(self.conn)
+        await self.conn.execute('BEGIN')
+        return self
 
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        try:
+            if exc_type is None:
+                await self.conn.execute('COMMIT')
+            else:
+                await self.conn.execute('ROLLBACK')
+        except Exception as e:
+            LOGGER.warning(f"{type(e).__name__}: {e}")
+            raise
+        finally:
+            await self.pool.close(self.conn)
+            self.clear_repo()

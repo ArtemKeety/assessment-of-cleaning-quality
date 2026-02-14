@@ -34,11 +34,11 @@ models = (
 )
 
 
-@CustomRetry(5, 1, requests.RequestException, Exception)
+@CustomRetry(5, 1, requests.RequestException, ConnectionError)
 def create_comment(s: requests.Session, clear: str, dirty: str):
 
-    clear_image: base64.b64encode = encoding_file(clear)
-    dirty_image: base64.b64encode = encoding_file(dirty)
+    clear_image: str = encoding_file(clear)
+    dirty_image: str = encoding_file(dirty)
 
     clear_mem_type: str = choice_type(clear)
     dirty_mem_type: str = choice_type(dirty)

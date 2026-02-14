@@ -30,7 +30,7 @@ class UserService:
 
 
     async def sign_in(self, u: UserLogin, agent:str, redis: RedisDb) -> Session:
-        async with self.repository.transaction() as repo:
+        async with self.repository as repo:
             if not (user := await repo.User.get_user(u)):
                 raise CustomHTTPException(status_code=400, detail=_("Error getting user"))
 
@@ -45,5 +45,5 @@ class UserService:
 
 
     async def del_user(self, user_id : int) -> int:
-        async with self.repository.transaction() as repo:
-            return await repo.User.get_user(user_id)
+        async with self.repository as repo:
+            return await repo.User.del_user(user_id)

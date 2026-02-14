@@ -35,17 +35,17 @@ class FlatService:
 
 
     async def all(self, user_id: int) -> list[Flat]:
-        async with self.repository.transaction() as repo:
+        async with self.repository as repo:
             return await repo.Flat.all(user_id)
 
 
 
     async def get_id(self, flat_id: int) -> list[FullFlat]:
-        async with self.repository.transaction() as repo:
+        async with self.repository as repo:
             return await repo.Flat.get_id(flat_id)
 
 
 
     async def delete(self, flat_id: int) -> int:
-        async with self.repository.transaction() as repo:
+        async with self.repository as repo:
             return await repo.Flat.delete(flat_id)

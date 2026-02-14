@@ -29,7 +29,8 @@ class LifeSpan:
         self.__create_folder()
         LOGGER.warning("Starting lifespan")
 
-        db_pool = DataBase(PsqlConfig())
+        db_pool = await DataBase.ainit(PsqlConfig())
+
         repo = UoWRepository(db_pool)
         service = UoWService(repo)
 

@@ -10,7 +10,7 @@ from configuration import LIFE_TIME, RedisConfig
 
 class RedisDb:
 
-    __slots__ = '__client'
+    __slots__ = ('__client', )
 
     def __init__(self, config: RedisConfig):
         self.__client = redis.Redis(

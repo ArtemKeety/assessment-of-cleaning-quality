@@ -52,17 +52,17 @@ class ReportService:
 
 
     async def get_reports(self, user_id: int) -> list[Report]:
-        async with self.repository.transaction() as repo:
+        async with self.repository as repo:
             return await repo.Report.get_reports(user_id)
 
 
     async def get_an_flat(self, flat_id: int) -> list[Report]:
-        async with self.repository.transaction() as repo:
+        async with self.repository as repo:
             return await repo.Report.get_an_flat(flat_id)
 
 
     async def get_current(self, report_id: int) -> list[ReportPath]:
-        async with self.repository.transaction() as repo:
+        async with self.repository as repo:
             return await repo.Report.get_current(report_id)
 
 
