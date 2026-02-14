@@ -1,10 +1,10 @@
+from typing import Protocol
+from database import RedisDb
 from .user import UserService
 from .flat import FlatService
-from database import RedisDb
 from .report import ReportService
 from internal.repo import Repository
 from fastapi import UploadFile, Request
-from typing import Protocol, AsyncGenerator
 from internal.shemas import Flat, FullFlat, Report, ReportPath, UserRegister, Session, UserLogin
 
 
