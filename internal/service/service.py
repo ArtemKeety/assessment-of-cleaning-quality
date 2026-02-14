@@ -1,4 +1,4 @@
-from typing import Protocol
+from typing import Protocol, AsyncGenerator, Any
 from database import RedisDb
 from .user import UserService
 from .flat import FlatService
@@ -41,7 +41,7 @@ class IServiceReport(Protocol):
         ...
 
     @staticmethod
-    async def task(report_id: int, request: Request):
+    def task(report_id: int, request: Request)-> AsyncGenerator[Any, Any]:
         ...
 
 

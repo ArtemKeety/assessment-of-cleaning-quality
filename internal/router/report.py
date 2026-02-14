@@ -3,6 +3,7 @@ from fastapi.responses import StreamingResponse
 from fastapi import APIRouter, UploadFile, Depends, Body, Request
 from internal.midleware import user_identy, ValidateFiles, CustomRateLimit
 from internal.layer import Layer
+from internal.service import Service
 
 
 router = APIRouter(prefix="/report")
@@ -12,7 +13,7 @@ router = APIRouter(prefix="/report")
 async def add(
         flat_id: int = Body(),
         photos: list[UploadFile]=Depends(ValidateFiles()),
-        service = Depends(Layer()),
+        service:Service = Depends(Layer()),
 ):
     return await service.Report.add(flat_id, photos)
 
@@ -32,12 +33,12 @@ async def get_an_flat(flat_id: int, service = Depends(Layer())):
 
 
 @router.get('/{report_id}', response_model=list[ReportPath], description="Показать полность отчёт по id")
-async def current_report(report_id: int, service = Depends(Layer())):
+async def current_report(report_id: int, service:Service = Depends(Layer())):
     return await service.Report.get_current(report_id)
 
 
 @router.get('/task/{report_id}', response_class=StreamingResponse)
-async def task(report_id: int, request: Request, service = Depends(Layer())):
+async def task(report_id: int, request: Request, service:Service = Depends(Layer())):
     return StreamingResponse(service.Report.task(report_id, request), media_type="text/event-stream")
 
 
