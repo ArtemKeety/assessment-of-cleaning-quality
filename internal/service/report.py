@@ -77,7 +77,7 @@ class ReportService:
 
 
     @staticmethod
-    async def task(report_id: int, request: Request)-> AsyncGenerator[str, None]:
+    async def task(report_id: int, request: Request):
 
         while not await request.is_disconnected():
 

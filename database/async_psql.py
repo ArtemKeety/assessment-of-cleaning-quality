@@ -2,13 +2,13 @@
 
 
 import asyncpg
-from fastapi import Request
-from customlogger import LOGGER
-from configuration import PsqlConfig
 
+from customlogger import LOGGER
+from typing import AsyncGenerator
+from configuration import PsqlConfig
 from contextlib import asynccontextmanager
 
-from typing import Any, AsyncGenerator, Optional
+
 
 
 class DataBase:
