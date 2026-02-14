@@ -43,5 +43,5 @@ class UserService:
         return Session(session=session)
 
 
-    async def del_user(self, user_id : int) -> int:
+    async def del_user(self, user_id : int) -> None:
         return await self.repository.User.del_user(user_id)
