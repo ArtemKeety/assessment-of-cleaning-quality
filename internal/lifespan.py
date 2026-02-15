@@ -3,10 +3,9 @@ import redis.asyncio as redis
 from fastapi import FastAPI
 from customlogger import LOGGER
 from configuration import PsqlConfig
-from internal.repository import Repository
-from internal.service import Service
 from configuration import RedisConfig
-from database import RedisDb, DataBase
+from database.async_redis import RedisDb
+from database.async_psql import DataBase
 from fastapi_limiter import FastAPILimiter
 from contextlib import asynccontextmanager
 from internal.midleware import user_address

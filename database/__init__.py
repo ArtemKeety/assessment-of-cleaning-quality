@@ -1,5 +1,5 @@
-from .async_psql import DataBase
-from .async_redis import RedisDb
+from .async_psql import PostgresSession
+from .async_redis import RedisSession
 from .sync_psql import SyncPsql
 
-__all__ = ["DataBase", "RedisDb", "SyncPsql"]
+__all__ = ("PostgresSession", "RedisSession", "SyncPsql")

@@ -1,6 +1,6 @@
 from typing import Any
 from fastapi_babel import _
-from .auth import user_identy
+from .auth import UserIdenty
 from .error import CustomHTTPException
 from fastapi import Depends, Request, Response
 from fastapi_limiter.depends import RateLimiter
@@ -17,7 +17,7 @@ class CustomRateLimit:
     async def __get_user_id(r: Request):
         return f"user_id:{r.state.user_id}"
 
-    async def __call__(self, r: Request, res: Response, user_data = Depends(user_identy)) -> Any:
+    async def __call__(self, r: Request, res: Response, user_data: UserIdenty) -> Any:
         limit = RateLimiter(
             times=self.__count,
             seconds=self.__times,

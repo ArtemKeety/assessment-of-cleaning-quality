@@ -1,9 +1,9 @@
-from database import RedisDb
-from fastapi import APIRouter, Depends, Response
+from database import RedisSession
+from fastapi import APIRouter, Response, Depends
 from internal.shemas import UserRegister, UserLogin, Session
 from configuration import LIFE_TIME, HTTP_ONLY, SECURE_CONNECTION
-from internal.midleware import get_header_data, user_identy
-from internal.layer import Layer
+from internal.midleware import UserIdenty, user_identy_dep
+from .dependecies import LayerDep, UserAgent
 
 
 router = APIRouter(prefix="/user")
@@ -13,9 +13,9 @@ router = APIRouter(prefix="/user")
 async def sign_up(
         r: UserRegister,
         res: Response,
-        agent: str = Depends(get_header_data),
-        service = Depends(Layer()),
-        redis: RedisDb = Depends(RedisDb.from_request_conn)
+        agent: UserAgent,
+        service: LayerDep,
+        redis: RedisSession
 )-> Session:
     s: Session = await service.User.sign_up(r, agent, redis)
     res.set_cookie(
@@ -32,9 +32,9 @@ async def sign_up(
 async def sign_in(
         u: UserLogin,
         res: Response,
-        agent: str = Depends(get_header_data),
-        service = Depends(Layer()),
-        redis: RedisDb = Depends(RedisDb.from_request_conn)
+        agent: UserAgent,
+        service:LayerDep,
+        redis: RedisSession
 )-> Session:
     s: Session = await service.User.sign_in(u, agent, redis)
     res.set_cookie(
@@ -50,8 +50,8 @@ async def sign_in(
 @router.post("/logout")
 async def logout(
         res: Response,
-        redis: RedisDb = Depends(RedisDb.from_request_conn),
-        user_data = Depends(user_identy)
+        redis: RedisSession,
+        user_data: UserIdenty
 ):
     await redis.delete(user_data.get('session'))
     res.delete_cookie('session')
@@ -61,15 +61,15 @@ async def logout(
 @router.delete("/delete", response_model=None, status_code=204)
 async def delete(
         res: Response,
-        redis: RedisDb = Depends(RedisDb.from_request_conn),
-        user_data = Depends(user_identy),
-        service = Depends(Layer()),
+        redis: RedisSession,
+        user_data: UserIdenty,
+        service: LayerDep,
 ):
     await redis.delete(user_data.get('session'))
     res.delete_cookie('session')
-    return await service.del_user(user_data.get('user_id'))
+    return await service.User.del_user(user_data.get('user_id'))
 
 
-@router.get("/check-auth", dependencies=[Depends(user_identy)], include_in_schema=False)
+@router.get("/check-auth", dependencies=[user_identy_dep], include_in_schema=False)
 async def check_auth():
     return {"message": "success"}

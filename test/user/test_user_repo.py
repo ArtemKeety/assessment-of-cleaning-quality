@@ -1,6 +1,6 @@
 import pytest
 
-from internal.repository.user import UserRepo  # поправь импорт под свой путь
+from internal.repository.postgres.user import UserRepo  # поправь импорт под свой путь
 from internal.shemas import UserLogin
 from internal.midleware import CustomHTTPException
 
@@ -24,7 +24,7 @@ class FakeConn:
 @pytest.mark.asyncio
 async def test_get_user_returns_user_when_found(monkeypatch):
     # Заглушаем babel _ чтобы не зависеть от контекста
-    import internal.repository.user as user_repo_module  # поправь под свой модуль
+    import internal.repository.postgres.user as user_repo_module  # поправь под свой модуль
     monkeypatch.setattr(user_repo_module, "_", lambda s: s)
 
     conn = FakeConn(fetchrow_result={
@@ -49,7 +49,7 @@ async def test_get_user_returns_user_when_found(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_get_user_returns_none_when_not_found(monkeypatch):
-    import internal.repository.user as user_repo_module  # поправь под свой модуль
+    import internal.repository.postgres.user as user_repo_module  # поправь под свой модуль
     monkeypatch.setattr(user_repo_module, "_", lambda s: s)
 
     conn = FakeConn(fetchrow_result=None)
@@ -63,7 +63,7 @@ async def test_get_user_returns_none_when_not_found(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_add_user_returns_new_id(monkeypatch):
-    import internal.repository.user as user_repo_module  # поправь под свой модуль
+    import internal.repository.postgres.user as user_repo_module  # поправь под свой модуль
     monkeypatch.setattr(user_repo_module, "_", lambda s: s)
 
     conn = FakeConn(fetchval_result=123)
@@ -80,7 +80,7 @@ async def test_add_user_returns_new_id(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_del_user_returns_id_when_updated(monkeypatch):
-    import internal.repository.user as user_repo_module  # поправь под свой модуль
+    import internal.repository.postgres.user as user_repo_module  # поправь под свой модуль
     monkeypatch.setattr(user_repo_module, "_", lambda s: s)
 
     conn = FakeConn(fetchval_result=42)
@@ -96,7 +96,7 @@ async def test_del_user_returns_id_when_updated(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_del_user_raises_custom_exception_when_not_updated(monkeypatch):
-    import internal.repository.user as user_repo_module  # поправь под свой модуль
+    import internal.repository.postgres.user as user_repo_module  # поправь под свой модуль
     monkeypatch.setattr(user_repo_module, "_", lambda s: s)
 
     conn = FakeConn(fetchval_result=None)

@@ -1,11 +1,7 @@
-import asyncpg
 
 from datetime import datetime
 from fastapi import UploadFile
 from typing import Protocol, Optional
-from internal.repository.flat import FlatRepo
-from internal.repository.user import UserRepo
-from internal.repository.report import ReportRepo
 from internal.shemas import Flat, FullFlat, Report, ReportPath, UserLogin, User
 
 
@@ -31,7 +27,7 @@ class IFlatRepo(Protocol):
     async def lock(self, key: int) -> None:
         ...
 
-class IRepoReport(Protocol):
+class IReportRepo(Protocol):
     async def add_report_place(self, flat_id: int, path: str, date: datetime) -> int:
         ...
 
@@ -50,7 +46,7 @@ class IRepoReport(Protocol):
     async def get_current(self, report_id: int) -> list[ReportPath]:
         ...
 
-class IRepoUser(Protocol):
+class IUserRepo(Protocol):
     async def get_user(self, u: UserLogin) -> Optional[User]:
         ...
 
@@ -62,11 +58,3 @@ class IRepoUser(Protocol):
 
 
 
-class Repository:
-
-    __slots__ = 'pool', 'conn','User', 'Flat', 'Report',
-
-    def __init__(self, conn: asyncpg.Connection):
-        self.User: IRepoUser = UserRepo(conn)
-        self.Flat: IFlatRepo = FlatRepo(conn)
-        self.Report: IRepoReport = ReportRepo(conn)

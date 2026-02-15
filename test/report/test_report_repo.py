@@ -3,7 +3,7 @@ from datetime import datetime
 
 from internal.midleware import CustomHTTPException
 from internal.shemas import Report, ReportPath
-from internal.repository.report import ReportRepo  # <-- поправь путь
+from internal.repository.postgres.report import ReportRepo  # <-- поправь путь
 
 
 # ---------- helpers ----------
@@ -43,7 +43,7 @@ class FakeConn:
 @pytest.fixture(autouse=True)
 def disable_babel(monkeypatch):
     # monkeypatch "_" в модуле, где объявлен ReportRepo
-    import internal.repository.report as report_repo_module  # <-- поправь под свой модуль
+    import internal.repository.postgres.report as report_repo_module  # <-- поправь под свой модуль
     monkeypatch.setattr(report_repo_module, "_", lambda s: s)
 
 

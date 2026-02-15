@@ -4,4 +4,4 @@ from .byte import encoding_file
 from .task import TaskCondition
 from .custom_retry import CustomRetry
 from .celery import get_status
-from .isolation_lvl import TransactionEnum
+from .isolation_lvl import IsolationLvl

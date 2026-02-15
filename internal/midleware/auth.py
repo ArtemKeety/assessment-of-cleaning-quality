@@ -1,5 +1,6 @@
 from fastapi_babel import _
-from database import RedisDb
+from database import RedisSession
+from typing import Annotated, Any
 from secrets import compare_digest
 from .error import CustomHTTPException
 from fastapi import Request, Depends, Response
@@ -9,8 +10,13 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 secure = HTTPBearer(auto_error=False)
 
+Credentials = Annotated[HTTPAuthorizationCredentials, Depends(secure)]
 
-async def user_identy(request: Request, response: Response, credentials: HTTPAuthorizationCredentials = Depends(secure)):
+async def user_identy(
+        request: Request,
+        response: Response,
+        credentials: Credentials,
+):
     session = request.cookies.get("session")
 
     if not session and credentials and credentials.scheme.lower() == "bearer":
@@ -19,7 +25,7 @@ async def user_identy(request: Request, response: Response, credentials: HTTPAut
     if not session:
         raise CustomHTTPException(status_code=401, detail=_("Not found credentials"))
 
-    redis: RedisDb = request.app.state.redis_pool
+    redis: RedisSession = request.app.state.redis_pool
 
     if not (data := await redis.get(session)):
         raise CustomHTTPException(status_code=401, detail=_("Out of session"))
@@ -43,6 +49,10 @@ async def user_identy(request: Request, response: Response, credentials: HTTPAut
     request.state.user_id = data.get("user_id")
 
     return data
+
+
+user_identy_dep = Depends(user_identy)
+UserIdenty = Annotated[dict[str, Any], user_identy_dep]
 
 
 

@@ -1,11 +1,13 @@
 import orjson
-from typing import Optional, Any, AsyncGenerator
-from fastapi import Request
+
+
 import redis.asyncio as redis
 from customlogger import LOGGER
+from fastapi import Request, Depends
 from redis.asyncio.client import Pipeline
 from contextlib import asynccontextmanager
 from configuration import LIFE_TIME, RedisConfig
+from typing import Optional, Any, AsyncGenerator, Annotated
 
 
 class RedisDb:
@@ -52,3 +54,5 @@ class RedisDb:
         async with self.__client.pipeline(transaction=transaction) as pipe:
             yield pipe
 
+
+RedisSession = Annotated[RedisDb, Depends(RedisDb.from_request_conn)]

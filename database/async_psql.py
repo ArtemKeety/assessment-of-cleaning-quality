@@ -1,14 +1,14 @@
 import asyncpg
-from customlogger import LOGGER
-from utils import TransactionEnum
-from configuration import PsqlConfig
-from typing import AsyncGenerator, Any
-from contextlib import asynccontextmanager
 
+from customlogger import LOGGER
+from configuration import PsqlConfig
+from typing import AsyncGenerator, Annotated
+from contextlib import asynccontextmanager
+from fastapi import Depends, Request
 
 
 class DataBase:
-    __slots__ = ("__pool", )
+    __slots__ = ("__pool",)
 
     def __init__(self, config: PsqlConfig) -> None:
         self.__pool: asyncpg.Pool = asyncpg.create_pool(
@@ -21,7 +21,6 @@ class DataBase:
             max_size=config.max_size,
             min_size=config.min_size,
         )
-
 
     @classmethod
     async def ainit(cls, config: PsqlConfig) -> 'DataBase':
@@ -39,20 +38,10 @@ class DataBase:
         async with self.__pool.acquire() as conn:
             yield conn
 
-    @asynccontextmanager
-    async def transaction(self, tr: TransactionEnum) -> AsyncGenerator['asyncpg.Connection', Any]:
-        async with self.__pool.acquire() as conn:
-            async with conn.transaction(isolation=tr):
-                try:
-                    yield conn
-                except Exception as e:
-                    LOGGER.warning(f"{type(e).__name__}: {e}")
-                    raise
+
+async def get_session(r: Request):
+    async with r.app.state.db_pool.session() as session:
+        yield session
 
 
-
-
-
-
-
-
+PostgresSession = Annotated[asyncpg.Connection, Depends(get_session)]

@@ -1,47 +1,46 @@
+from fastapi import APIRouter, Body, Request
 from internal.shemas import Report, ReportPath
 from fastapi.responses import StreamingResponse
-from fastapi import APIRouter, UploadFile, Depends, Body, Request
-from internal.midleware import user_identy, ValidateFiles, CustomRateLimit
-from internal.layer import Layer
-from internal.service import Service
+from internal.midleware import user_identy_dep, UserIdenty
+from .dependecies import LayerDep, time_limit_long, Photos
 
 
 router = APIRouter(prefix="/report")
 
 
-@router.post("/add", response_model=Report, dependencies=[Depends(CustomRateLimit(1, minute=3))])
+@router.post("/add", response_model=Report, dependencies=[time_limit_long])
 async def add(
+        photos: Photos,
+        service:LayerDep,
         flat_id: int = Body(),
-        photos: list[UploadFile]=Depends(ValidateFiles()),
-        service:Service = Depends(Layer()),
 ):
     return await service.Report.add(flat_id, photos)
 
 
 @router.get("/all", response_model=list[Report], description="Запросить все отчёты у пользователя")
-async def reports(user_data = Depends(user_identy), service = Depends(Layer())):
+async def reports(user_data:UserIdenty, service:LayerDep):
     return await service.Report.get_reports(user_data.get("user_id"))
 
 
 @router.get("/flat/{flat_id}",
     response_model=list[Report],
     description="Запросить все отчёты по квартире",
-    dependencies=[Depends(user_identy)]
+    dependencies=[user_identy_dep],
 )
-async def get_an_flat(flat_id: int, service = Depends(Layer())):
+async def get_an_flat(flat_id: int, service: LayerDep):
     return await service.Report.get_an_flat(flat_id)
 
 
 @router.get('/{report_id}', response_model=list[ReportPath], description="Показать полность отчёт по id")
-async def current_report(report_id: int, service:Service = Depends(Layer())):
+async def current_report(report_id: int, service:LayerDep):
     return await service.Report.get_current(report_id)
 
 
 @router.get('/task/{report_id}', response_class=StreamingResponse)
-async def task(report_id: int, request: Request, service:Service = Depends(Layer())):
+async def task(report_id: int, request: Request, service:LayerDep):
     return StreamingResponse(service.Report.task(report_id, request), media_type="text/event-stream")
 
 
-@router.delete('/{report_id}', response_model=None, dependencies=[Depends(user_identy)], status_code=204)
-async def del_report(report_id: int, service = Depends(Layer())):
+@router.delete('/{report_id}', response_model=None, dependencies=[user_identy_dep], status_code=204)
+async def del_report(report_id: int, service: LayerDep):
     return await service.Report.delete_report(report_id)

@@ -9,9 +9,9 @@ class ValidateFiles:
 
     __slots__  = ("count", "patterns", "size")
 
-    def __init__(self, count: int = 10, size: int = FILE_SIZE, *pattern:str):
+    def __init__(self, count: int, size: int, *pattern:str):
         self.count = count
-        self.patterns = pattern if pattern else (".jpg", ".png")
+        self.patterns = pattern
         self.size = size
 
 

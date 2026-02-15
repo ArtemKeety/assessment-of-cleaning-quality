@@ -1,7 +1,7 @@
 from fastapi import Request
 
 
-async def get_header_data(request: Request):
+async def get_header_data(request: Request)-> str:
     return request.headers.get("User-Agent")
 
 
