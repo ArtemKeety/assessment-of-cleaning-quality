@@ -5,7 +5,6 @@ from .interface_repo import IRepository
 from utils.isolation_lvl import IsolationLvl
 
 
-
 class Transaction:
 
     __slots__ = ('repo', 'tr', 'iso_lvl')
