@@ -76,9 +76,12 @@ class ReportService:
 
             state, meta = await asyncio.to_thread(get_status, str(report_id))
 
-            conditions = state == TaskCondition.success or state == TaskCondition.failure
+            conditions: tuple[bool, ...] = (
+                state == TaskCondition.success or state == TaskCondition.failure,
+                meta is None,
+            )
 
-            if conditions: break
+            if any(conditions): break
 
             step, count = meta.get("step", 0), meta.get("count", 1)
 
