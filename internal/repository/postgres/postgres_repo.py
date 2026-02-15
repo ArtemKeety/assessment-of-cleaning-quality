@@ -1,5 +1,7 @@
 import asyncpg
-from internal.repository.postgres import UserRepo,FlatRepo,ReportRepo
+from .flat import FlatRepo
+from .user import UserRepo
+from .report import ReportRepo
 from internal.repository.interface_repo import IReportRepo, IFlatRepo, IUserRepo
 
 class Repository:

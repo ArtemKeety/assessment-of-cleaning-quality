@@ -1,11 +1,11 @@
-
 from datetime import datetime
 from fastapi import UploadFile
-from typing import Protocol, Optional
+from typing import Protocol, Optional, Any
 from internal.shemas import Flat, FullFlat, Report, ReportPath, UserLogin, User, Pagination
 
 
 class IFlatRepo(Protocol):
+
     async def add_flat(self, name: str, user_id: int, preview: UploadFile) -> int:
         ...
 
@@ -28,6 +28,7 @@ class IFlatRepo(Protocol):
         ...
 
 class IReportRepo(Protocol):
+
     async def add_report_place(self, flat_id: int, path: str, date: datetime) -> int:
         ...
 
@@ -47,6 +48,7 @@ class IReportRepo(Protocol):
         ...
 
 class IUserRepo(Protocol):
+
     async def get_user(self, u: UserLogin) -> Optional[User]:
         ...
 
@@ -58,3 +60,13 @@ class IUserRepo(Protocol):
 
 
 
+class IRepository(Protocol):
+    User: IUserRepo
+    Report: IReportRepo
+    Flat: IFlatRepo
+    conn: Any
+
+    __slots__ = 'conn', 'User', 'Flat', 'Report',
+
+    def __init__(self, conn: Any):
+        ...

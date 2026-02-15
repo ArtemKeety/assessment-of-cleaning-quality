@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from fastapi import UploadFile, Request
 from configuration import RAW_REPORT_FILE_PATH
 from internal.midleware import CustomHTTPException
-from internal.repository import Transaction, Repository
+from internal.repository import Transaction, IRepository
 from internal.shemas import Report, ReportPath, Pagination
 from utils import download_files, TaskCondition, get_status
 
@@ -15,7 +15,7 @@ from utils import download_files, TaskCondition, get_status
 
 @dataclass(slots=True, frozen=True, init=True)
 class ReportService:
-    repository: Repository
+    repository: IRepository
 
     async def add(self, flat_id: int, dirty_photos: list[UploadFile]) -> Report:
 

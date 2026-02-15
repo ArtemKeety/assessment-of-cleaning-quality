@@ -1,20 +1,21 @@
 from typing import Optional
 from customlogger import LOGGER
 from asyncpg import transaction
+from .interface_repo import IRepository
 from utils.isolation_lvl import IsolationLvl
-from internal.repository.postgres_repo import Repository
+
 
 
 class Transaction:
 
     __slots__ = ('repo', 'tr', 'iso_lvl')
 
-    def __init__(self, repo: Repository, iso_lvl: IsolationLvl = IsolationLvl.read_committed):
-        self.repo: Repository = repo
+    def __init__(self, repo: IRepository, iso_lvl: IsolationLvl = IsolationLvl.read_committed):
+        self.repo: IRepository = repo
         self.tr: Optional[transaction.Transaction] = None
         self.iso_lvl = iso_lvl
 
-    async def __aenter__(self)-> 'Repository':
+    async def __aenter__(self)-> 'IRepository':
         self.tr = self.repo.conn.transaction(isolation=self.iso_lvl)
         await self.tr.start()
         return self.repo

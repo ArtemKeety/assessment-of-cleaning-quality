@@ -7,12 +7,12 @@ from utils.isolation_lvl import IsolationLvl
 from internal.midleware import CustomHTTPException
 from configuration import FLAT_FILE_PATH, MAX_COUNT
 from internal.shemas import Flat, FullFlat, Pagination
-from internal.repository import Transaction, Repository
+from internal.repository import Transaction, IRepository
 
 
 @dataclass(init=True, slots=True, frozen=True)
 class FlatService:
-    repository: Repository
+    repository: IRepository
 
     async def add(self, name: str, user_id: int, photos: list[UploadFile]) -> Flat:
 
