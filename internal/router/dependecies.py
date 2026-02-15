@@ -7,7 +7,7 @@ from internal.repository import Repository
 from internal.midleware import ValidateFiles, CustomRateLimit, get_header_data
 
 
-async def layer(session: PostgresSession):
+async def layer(session: PostgresSession) -> Service:
     repo = Repository(session)
     service = Service(repo)
     return service
