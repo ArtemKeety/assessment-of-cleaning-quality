@@ -7,9 +7,9 @@ from tasks import request_from_ai
 from dataclasses import dataclass
 from fastapi import UploadFile, Request
 from configuration import RAW_REPORT_FILE_PATH
-from internal.shemas import Report, ReportPath
 from internal.midleware import CustomHTTPException
 from internal.repository import Transaction, Repository
+from internal.shemas import Report, ReportPath, Pagination
 from utils import download_files, TaskCondition, get_status
 
 
@@ -53,12 +53,12 @@ class ReportService:
         return Report(id=report_id, flat_id=flat_id, preview=dirty_photos[0].filename, date=time)
 
 
-    async def get_reports(self, user_id: int) -> list[Report]:
-        return await self.repository.Report.get_reports(user_id)
+    async def get_reports(self, user_id: int, pages: Pagination) -> list[Report]:
+        return await self.repository.Report.get_reports(user_id, pages)
 
 
-    async def get_an_flat(self, flat_id: int) -> list[Report]:
-        return await self.repository.Report.get_an_flat(flat_id)
+    async def get_an_flat(self, flat_id: int, pages: Pagination) -> list[Report]:
+        return await self.repository.Report.get_an_flat(flat_id, pages)
 
 
     async def get_current(self, report_id: int) -> list[ReportPath]:
@@ -76,18 +76,13 @@ class ReportService:
 
             state, meta = await asyncio.to_thread(get_status, str(report_id))
 
-            conditions = (
-                state == TaskCondition.success or state == TaskCondition.failure,
-                meta is None,
-            )
+            conditions = state == TaskCondition.success or state == TaskCondition.failure
 
-            if any(conditions): break
+            if conditions: break
 
-            step: Decimal = Decimal(meta.get("step", 0))
-            count: Decimal = Decimal(meta.get("count", 1))
-            percent: Decimal = step * (100 / count)
+            step, count = meta.get("step", 0), meta.get("count", 1)
 
-            yield f"{percent:.2f}\n"
+            yield f"{(step / count) * 100:.2f}\n"
 
             await asyncio.sleep(1)
 

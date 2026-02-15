@@ -2,8 +2,8 @@ import asyncpg
 from fastapi_babel import _
 from datetime import datetime
 from dataclasses import dataclass
-from internal.shemas import Report, ReportPath
 from internal.midleware import CustomHTTPException
+from internal.shemas import Report, ReportPath, Pagination
 
 @dataclass(slots=True, frozen=True, init=True)
 class ReportRepo:
@@ -32,24 +32,26 @@ class ReportRepo:
         )
 
 
-    async def get_reports(self, user_id:int) -> list[Report]:
+    async def get_reports(self, user_id: int, pages: Pagination) -> list[Report]:
         if res := await self.conn.fetch(
             """
                 select r.id, r.flat_id, r.preview, r.date
                 from report r
                 join flat f on f.id = r.flat_id
                 where f.user_id = $1
+                LIMIT $2
+                OFFSET $3
             """,
-            user_id,
+            user_id, pages.volume, pages.offset,
         ):
             return [Report(**obj) for obj in res]
         return []
 
 
-    async def get_an_flat(self, flat_id: int) -> list[Report]:
+    async def get_an_flat(self, flat_id: int, pages: Pagination) -> list[Report]:
         if res := await self.conn.fetch(
-          "select * from report where flat_id = $1",
-            flat_id,
+          "select * from report where flat_id = $1 LIMIT $2 OFFSET $3",
+            flat_id, pages.volume, pages.offset,
         ):
             return [Report(**obj) for obj in res]
         raise CustomHTTPException(status_code=404, detail=_("Not found report"))

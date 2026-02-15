@@ -2,7 +2,7 @@
 from datetime import datetime
 from fastapi import UploadFile
 from typing import Protocol, Optional
-from internal.shemas import Flat, FullFlat, Report, ReportPath, UserLogin, User
+from internal.shemas import Flat, FullFlat, Report, ReportPath, UserLogin, User, Pagination
 
 
 class IFlatRepo(Protocol):
@@ -15,7 +15,7 @@ class IFlatRepo(Protocol):
     async def delete(self, flat_id: int) -> None:
         ...
 
-    async def all(self, user_id: int) -> list[Flat]:
+    async def all(self, user_id: int, pages: Pagination) -> list[Flat]:
         ...
 
     async def get_id(self, flat_id: int) -> list[FullFlat]:
@@ -37,10 +37,10 @@ class IReportRepo(Protocol):
     async def del_report(self, report_id: int) -> None:
         ...
 
-    async def get_reports(self, user_id: int) -> list[Report]:
+    async def get_reports(self, user_id: int, pages: Pagination) -> list[Report]:
         ...
 
-    async def get_an_flat(self, flat_id: int) -> list[Report]:
+    async def get_an_flat(self, flat_id: int, pages: Pagination) -> list[Report]:
         ...
 
     async def get_current(self, report_id: int) -> list[ReportPath]:

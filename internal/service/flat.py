@@ -3,10 +3,10 @@ from fastapi_babel import _
 from fastapi import UploadFile
 from utils import download_files
 from dataclasses import dataclass
-from internal.shemas import Flat, FullFlat
 from utils.isolation_lvl import IsolationLvl
 from internal.midleware import CustomHTTPException
 from configuration import FLAT_FILE_PATH, MAX_COUNT
+from internal.shemas import Flat, FullFlat, Pagination
 from internal.repository import Transaction, Repository
 
 
@@ -35,8 +35,8 @@ class FlatService:
         return Flat(id=flat_id, name=name, preview=photos[0].filename)
 
 
-    async def all(self, user_id: int) -> list[Flat]:
-        return await self.repository.Flat.all(user_id)
+    async def all(self, user_id: int, pages: Pagination) -> list[Flat]:
+        return await self.repository.Flat.all(user_id, pages)
 
 
     async def get_id(self, flat_id: int) -> list[FullFlat]:

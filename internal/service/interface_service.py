@@ -1,8 +1,7 @@
 from database import RedisSession
 from fastapi import UploadFile, Request
-from internal.repository import Repository
 from typing import Protocol, AsyncGenerator, Any
-from internal.shemas import Flat, FullFlat, Report, ReportPath, UserRegister, Session, UserLogin
+from internal.shemas import Flat, FullFlat, Report, ReportPath, UserRegister, Session, UserLogin, Pagination
 
 
 class IFlatService(Protocol):
@@ -10,7 +9,7 @@ class IFlatService(Protocol):
     async def add(self, name: str, user_id: int, photos: list[UploadFile]) -> Flat:
         ...
 
-    async def all(self, user_id: int) -> list[Flat]:
+    async def all(self, user_id: int, pages: Pagination) -> list[Flat]:
         ...
 
     async def get_id(self, flat_id: int) -> list[FullFlat]:
@@ -25,10 +24,10 @@ class IReportService(Protocol):
     async def add(self, flat_id: int, dirty_photos: list[UploadFile]) -> Report:
         ...
 
-    async def get_reports(self, user_id: int) -> list[Report]:
+    async def get_reports(self, user_id: int, pages: Pagination) -> list[Report]:
         ...
 
-    async def get_an_flat(self, flat_id: int) -> list[Report]:
+    async def get_an_flat(self, flat_id: int, pages: Pagination) -> list[Report]:
         ...
 
     async def get_current(self, report_id: int) -> list[ReportPath]:

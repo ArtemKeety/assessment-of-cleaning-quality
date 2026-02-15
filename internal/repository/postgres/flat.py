@@ -2,8 +2,8 @@ import asyncpg
 from fastapi_babel import _
 from fastapi import UploadFile
 from dataclasses import dataclass
-from internal.shemas import Flat, FullFlat
 from internal.midleware import CustomHTTPException
+from internal.shemas import Flat, FullFlat, Pagination
 
 
 @dataclass(slots=True, frozen=True, init=True)
@@ -33,10 +33,10 @@ class FlatRepo:
         )
 
 
-    async def all(self, user_id: int) -> list[Flat]:
+    async def all(self, user_id: int, pages: Pagination) -> list[Flat]:
         if res := await self.conn.fetch(
-            "SELECT id, name, preview FROM flat WHERE user_id = $1",
-            user_id
+            "SELECT id, name, preview FROM flat WHERE user_id = $1 LIMIT $2 OFFSET $3",
+            user_id, pages.volume, pages.offset
         ):
             return [Flat(**obj) for obj in res]
         return []
