@@ -1,6 +1,5 @@
 import asyncio
 from fastapi_babel import _
-from decimal import Decimal
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from tasks import request_from_ai
