@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Body, Query
+from .dependecies import LayerDep, Photos
+from fastapi import APIRouter, Body, Query, Depends
 from internal.shemas import Flat, FullFlat, Pagination
-from internal.midleware import user_identy_dep, UserIdenty
-from .dependecies import LayerDep, TimeLimitSmall, Photos
+from internal.midleware import user_identy, UserIdenty, CustomRateLimit
+
 
 router = APIRouter(prefix="/flat")
 
@@ -10,7 +11,7 @@ router = APIRouter(prefix="/flat")
 async def add_flat(
         photos: Photos,
         service: LayerDep,
-        user_data: TimeLimitSmall,
+        user_data: dict[str, ...] = Depends(CustomRateLimit(2, minute=1)),
         name: str = Body(),
 ):
     return await service.Flat.add(name, user_data.get('user_id'), photos)
@@ -23,6 +24,6 @@ async def get_flats(user_data: UserIdenty, service: LayerDep, pages: Pagination=
 async def get_id(flat_id: int, service: LayerDep):
     return await service.Flat.get_id(flat_id)
 
-@router.delete('/{flat_id}', response_model=None, dependencies=[user_identy_dep], status_code=204)
+@router.delete('/{flat_id}', response_model=None, dependencies=[Depends(user_identy)], status_code=204)
 async def delete(flat_id: int, service: LayerDep):
     return await service.Flat.delete(flat_id)

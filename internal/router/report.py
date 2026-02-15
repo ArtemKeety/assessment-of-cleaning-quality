@@ -1,18 +1,18 @@
 from internal.shemas import Pagination
+from .dependecies import LayerDep, Photos
 from internal.shemas import Report, ReportPath
 from fastapi.responses import StreamingResponse
-from fastapi import APIRouter, Body, Request, Query
-from internal.midleware import user_identy_dep, UserIdenty
-from .dependecies import LayerDep, time_limit_long, Photos
+from fastapi import APIRouter, Body, Request, Query, Depends
+from internal.midleware import user_identy, UserIdenty, CustomRateLimit
 
 
 router = APIRouter(prefix="/report")
 
 
-@router.post("/add", response_model=Report, dependencies=[time_limit_long])
+@router.post("/add", response_model=Report, dependencies=[Depends(CustomRateLimit(1, minute=3))])
 async def add(
         photos: Photos,
-        service:LayerDep,
+        service: LayerDep,
         flat_id: int = Body(),
 ):
     return await service.Report.add(flat_id, photos)
@@ -26,7 +26,7 @@ async def reports(user_data: UserIdenty, service: LayerDep, pages: Pagination=Qu
 @router.get("/flat/{flat_id}",
     response_model=list[Report],
     description="Запросить все отчёты по квартире",
-    dependencies=[user_identy_dep],
+    dependencies=[Depends(user_identy)],
 )
 async def get_an_flat(flat_id: int, service: LayerDep, pages: Pagination=Query()):
     return await service.Report.get_an_flat(flat_id, pages)
@@ -42,6 +42,6 @@ async def task(report_id: int, request: Request, service: LayerDep):
     return StreamingResponse(service.Report.task(report_id, request), media_type="text/event-stream")
 
 
-@router.delete('/{report_id}', response_model=None, dependencies=[user_identy_dep], status_code=204)
+@router.delete('/{report_id}', response_model=None, dependencies=[Depends(user_identy)], status_code=204)
 async def del_report(report_id: int, service: LayerDep):
     return await service.Report.delete_report(report_id)

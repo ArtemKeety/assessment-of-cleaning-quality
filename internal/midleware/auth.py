@@ -50,9 +50,7 @@ async def user_identy(
 
     return data
 
-
-user_identy_dep = Depends(user_identy)
-UserIdenty = Annotated[dict[str, Any], user_identy_dep]
+UserIdenty = Annotated[dict[str, Any],  Depends(user_identy)]
 
 
 

@@ -1,9 +1,9 @@
 from database import RedisSession
+from .dependecies import LayerDep, UserAgent
 from fastapi import APIRouter, Response, Depends
+from internal.midleware import UserIdenty, user_identy
 from internal.shemas import UserRegister, UserLogin, Session
 from configuration import LIFE_TIME, HTTP_ONLY, SECURE_CONNECTION
-from internal.midleware import UserIdenty, user_identy_dep
-from .dependecies import LayerDep, UserAgent
 
 
 router = APIRouter(prefix="/user")
@@ -70,6 +70,6 @@ async def delete(
     return await service.User.del_user(user_data.get('user_id'))
 
 
-@router.get("/check-auth", dependencies=[user_identy_dep], include_in_schema=False)
+@router.get("/check-auth", dependencies=[Depends(user_identy)], include_in_schema=False)
 async def check_auth():
     return {"message": "success"}
