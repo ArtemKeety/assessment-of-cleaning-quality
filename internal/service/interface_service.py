@@ -1,6 +1,6 @@
 from database import RedisSession
 from fastapi import UploadFile, Request
-from internal.repository import IRepository
+from internal.repository import Repository
 from typing import Protocol, AsyncGenerator, Any
 from internal.shemas import Flat, FullFlat, Report, ReportPath, UserRegister, Session, UserLogin
 
@@ -53,15 +53,7 @@ class IUserService(Protocol):
     async def del_user(self, user_id: int) -> None:
         ...
 
-class IService(Protocol):
-    User: IUserService
-    Flat: IFlatService
-    Report: IReportService
 
-    __slots__ = ('User', 'Flat', 'Report')
-
-    def __init__(self, repo: IRepository):
-        ...
 
 
 

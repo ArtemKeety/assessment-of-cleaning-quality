@@ -4,13 +4,13 @@ from fastapi_babel import _
 from database import RedisSession
 from dataclasses import dataclass
 from internal.midleware import CustomHTTPException
+from internal.repository import Transaction, Repository
 from internal.shemas import UserRegister, UserLogin, Session
-from internal.repository.postgres import Transaction, Repository
-from internal.repository import ABCRepository
+
 
 @dataclass(slots=True, frozen=True, init=True)
 class UserService:
-    repository: ABCRepository
+    repository: Repository
 
     async def sign_up(self, u: UserRegister, agent: str, redis: RedisSession) -> Session:
 

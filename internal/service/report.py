@@ -9,8 +9,9 @@ from fastapi import UploadFile, Request
 from configuration import RAW_REPORT_FILE_PATH
 from internal.shemas import Report, ReportPath
 from internal.midleware import CustomHTTPException
+from internal.repository import Transaction, Repository
 from utils import download_files, TaskCondition, get_status
-from internal.repository.postgres import Transaction, Repository
+
 
 
 @dataclass(slots=True, frozen=True, init=True)

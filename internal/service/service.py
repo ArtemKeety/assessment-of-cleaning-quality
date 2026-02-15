@@ -2,7 +2,7 @@ from .user import UserService
 from .flat import FlatService
 from .report import ReportService
 from .interface_service import IFlatService, IUserService, IReportService
-from internal.repository.postgres import Repository
+from internal.repository import Repository
 
 class Service:
     __slots__ = ('User', 'Flat', 'Report')

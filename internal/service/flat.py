@@ -17,6 +17,7 @@ class FlatService:
     async def add(self, name: str, user_id: int, photos: list[UploadFile]) -> Flat:
 
         async with Transaction(self.repository, IsolationLvl.serializable) as repo:
+
             if MAX_COUNT <= await repo.Flat.count(user_id):
                 raise CustomHTTPException(
                     detail=_("A user cannot have a flat of more than") + f" {MAX_COUNT}",
