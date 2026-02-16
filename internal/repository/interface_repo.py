@@ -67,6 +67,3 @@ class IRepository(Protocol):
     conn: Any
 
     __slots__ = 'conn', 'User', 'Flat', 'Report',
-
-    def __init__(self, conn: Any):
-        ...

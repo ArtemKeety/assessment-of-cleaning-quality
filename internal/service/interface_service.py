@@ -62,9 +62,6 @@ class IService(Protocol):
 
     __slots__ = ('User', 'Flat', 'Report')
 
-    def __init__(self, repo: IRepository):
-        ...
-
 
 
 
