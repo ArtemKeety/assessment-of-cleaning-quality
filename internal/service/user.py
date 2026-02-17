@@ -15,6 +15,7 @@ class UserService:
     async def sign_up(self, u: UserRegister, agent: str, redis: RedisSession) -> Session:
 
         async with Transaction(self.repository) as repo:
+
             if await repo.User.get_user(u):
                 raise CustomHTTPException(status_code=409, detail=_("User already exists"))
 
