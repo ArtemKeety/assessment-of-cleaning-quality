@@ -6,7 +6,7 @@ from fastapi import APIRouter, Body, Request, Query, Depends
 from internal.midleware import user_identy, UserIdenty, CustomRateLimit
 
 
-router = APIRouter(prefix="/report")
+router = APIRouter(prefix="/api/v1")
 
 
 @router.post("/add", response_model=Report, dependencies=[Depends(CustomRateLimit(1, minute=3))])

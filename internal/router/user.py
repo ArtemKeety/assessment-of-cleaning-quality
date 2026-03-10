@@ -6,7 +6,7 @@ from internal.shemas import UserRegister, UserLogin, Session
 from configuration import LIFE_TIME, HTTP_ONLY, SECURE_CONNECTION
 
 
-router = APIRouter(prefix="/user")
+router = APIRouter(prefix="/api/v1")
 
 
 @router.post("/sign-up", response_model=Session)

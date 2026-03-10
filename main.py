@@ -56,15 +56,17 @@ app.add_middleware(LogMiddleware)
 app.add_middleware(TimeoutMiddleware, TIMEOUT)
 app.add_middleware(BabelMiddleware, babel_configs=babel_configs)
 
+
+app.add_exception_handler(Exception, ErrorHandler.Panic)
+app.add_exception_handler(ConnectionError, ErrorHandler.ConnectionError)
 app.add_exception_handler(CustomHTTPException, ErrorHandler.CustomHTTPException)
 app.add_exception_handler(asyncpg.UniqueViolationError, ErrorHandler.UniqueViolationError)
 app.add_exception_handler(RequestValidationError, ErrorHandler.PydenticValidationError)
-app.add_exception_handler(ConnectionError, ErrorHandler.ConnectionError)
-app.add_exception_handler(Exception, ErrorHandler.Panic)
 
-app.include_router(user_router, prefix="/api/v1", tags=["user"])
-app.include_router(flat_router, prefix="/api/v1", tags=["flat"])
-app.include_router(report_router, prefix="/api/v1", tags=["report"])
+
+app.include_router(user_router, prefix="/user", tags=["user"])
+app.include_router(flat_router, prefix="/flat", tags=["flat"])
+app.include_router(report_router, prefix="/report", tags=["report"])
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 

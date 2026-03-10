@@ -4,7 +4,7 @@ from internal.shemas import Flat, FullFlat, Pagination
 from internal.midleware import user_identy, UserIdenty, CustomRateLimit
 
 
-router = APIRouter(prefix="/flat")
+router = APIRouter(prefix="/api/v1")
 
 
 @router.post("/add", response_model=Flat)
