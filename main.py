@@ -56,15 +56,17 @@ app.add_middleware(LogMiddleware)
 app.add_middleware(TimeoutMiddleware, TIMEOUT)
 app.add_middleware(BabelMiddleware, babel_configs=babel_configs)
 
+
+app.add_exception_handler(Exception, ErrorHandler.Panic)
+app.add_exception_handler(ConnectionError, ErrorHandler.ConnectionError)
 app.add_exception_handler(CustomHTTPException, ErrorHandler.CustomHTTPException)
 app.add_exception_handler(asyncpg.UniqueViolationError, ErrorHandler.UniqueViolationError)
 app.add_exception_handler(RequestValidationError, ErrorHandler.PydenticValidationError)
-app.add_exception_handler(ConnectionError, ErrorHandler.ConnectionError)
-app.add_exception_handler(Exception, ErrorHandler.Panic)
 
-app.include_router(user_router, prefix="/api/v1", tags=["user"])
-app.include_router(flat_router, prefix="/api/v1", tags=["flat"])
-app.include_router(report_router, prefix="/api/v1", tags=["report"])
+
+app.include_router(user_router, prefix="/user", tags=["user"])
+app.include_router(flat_router, prefix="/flat", tags=["flat"])
+app.include_router(report_router, prefix="/report", tags=["report"])
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -78,13 +80,15 @@ async def openapi():
 
 
 if __name__ == '__main__':
-    server = Granian(
-        target="main:app",
-        interface=Interfaces.ASGI,
-        workers=WORKERS,
-        runtime_threads=8,
-        address="0.0.0.0",
-        port=8000,
-    )
-    server.serve()
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, workers=8)
+    # server = Granian(
+    #     target="main:app",
+    #     interface=Interfaces.ASGI,
+    #     workers=WORKERS,
+    #     runtime_threads=8,
+    #     address="0.0.0.0",
+    #     port=8000,
+    # )
+    # server.serve()
 

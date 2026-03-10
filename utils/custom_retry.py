@@ -16,7 +16,7 @@ class CustomRetry:
     def __call__(self, func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            error = None
+            error = Exception("!")
             for attempt in range(self.count):
                 try:
                     return func(*args, **kwargs)

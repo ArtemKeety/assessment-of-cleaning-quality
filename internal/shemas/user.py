@@ -1,8 +1,10 @@
 import re
 from .base import Base
 from fastapi_babel import _
+from internal.domain import Role
 from internal.midleware import CustomHTTPException
 from pydantic import model_validator, Field, field_validator
+
 
 
 class UserLogin(Base):
@@ -10,11 +12,16 @@ class UserLogin(Base):
     password:str = Field(min_length=3, max_length=25)
 
 
+class UserRole(Base):
+    role: Role
+
+
 class User(Base):
     id: int
     is_active: bool
     login:str = Field(min_length=3, max_length=255)
     password:str = Field(min_length=3, max_length=255)
+    role: Role = Field(default=Role.default)
 
 
 class UserRegister(UserLogin):
@@ -26,7 +33,7 @@ class UserRegister(UserLogin):
             raise CustomHTTPException(detail=_('Passwords do not equal'), status_code=400)
         return self
 
-
+    @classmethod
     @field_validator('password')
     def validate_password(cls, value:str) -> str:
         pattern4 = r'[' + re.escape('!@#$%^&*') + r']'

@@ -3,13 +3,13 @@ from .dependecies import LayerDep, Photos
 from internal.shemas import Report, ReportPath
 from fastapi.responses import StreamingResponse
 from fastapi import APIRouter, Body, Request, Query, Depends
-from internal.midleware import user_identy, UserIdenty, CustomRateLimit
+from internal.midleware import user_identy, UserIdenty, RoleLimit
 
 
-router = APIRouter(prefix="/report")
+router = APIRouter(prefix="/api/v1")
 
 
-@router.post("/add", response_model=Report, dependencies=[Depends(CustomRateLimit(1, minute=3))])
+@router.post("/add", response_model=Report, dependencies=[Depends(RoleLimit())])
 async def add(
         photos: Photos,
         service: LayerDep,
@@ -19,8 +19,8 @@ async def add(
 
 
 @router.get("/all", response_model=list[Report], description="Запросить все отчёты у пользователя")
-async def reports(user_data: UserIdenty, service: LayerDep, pages: Pagination=Query()):
-    return await service.Report.get_reports(user_data.get("user_id"), pages)
+async def reports(user: UserIdenty, service: LayerDep, pages: Pagination=Query()):
+    return await service.Report.get_reports(user, pages)
 
 
 @router.get("/flat/{flat_id}",

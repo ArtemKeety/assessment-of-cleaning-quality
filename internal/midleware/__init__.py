@@ -5,7 +5,7 @@ from .auth import user_identy, UserIdenty
 from .header import get_header_data, user_address
 from .files import ValidateFiles
 from .swagger import swagger_auth
-from .custom_ratelimit import CustomRateLimit
+from .custom_ratelimit import CustomRateLimit, RoleLimit
 
 
 
@@ -21,5 +21,6 @@ __all__ = (
     'ValidateFiles',
     'CustomRateLimit',
     "get_header_data",
-    "UserIdenty"
+    "UserIdenty",
+    "RoleLimit",
 )

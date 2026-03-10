@@ -21,9 +21,9 @@ __path_for_flat = os.path.join(__pathBase, "flat")
     max_retries=3,
     default_retry_delay=180,
     ignore_result=True,
-    autoretry_for=(requests.RequestException, ConnectionError)
+    autoretry_for=(requests.RequestException, ConnectionError, requests.HTTPError)
 )
-def request_from_ai(self, report_id: int , photos: tuple[tuple[str,str], ...]): #dirty_photo: list[str], clear_photo: list[str]
+def request_from_ai(self, report_id: int , photos: tuple[tuple[str,str], ...]):
     LOGGER.info("celery is starting")
 
     self.update_state(

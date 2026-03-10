@@ -4,6 +4,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from tasks import request_from_ai
 from dataclasses import dataclass
+from internal.domain import UserDomain
 from fastapi import UploadFile, Request
 from configuration import RAW_REPORT_FILE_PATH
 from internal.midleware import CustomHTTPException
@@ -52,8 +53,8 @@ class ReportService:
         return Report(id=report_id, flat_id=flat_id, preview=dirty_photos[0].filename, date=time)
 
 
-    async def get_reports(self, user_id: int, pages: Pagination) -> list[Report]:
-        return await self.repository.Report.get_reports(user_id, pages)
+    async def get_reports(self, user: UserDomain, pages: Pagination) -> list[Report]:
+        return await self.repository.Report.get_reports(user.id, pages)
 
 
     async def get_an_flat(self, flat_id: int, pages: Pagination) -> list[Report]:

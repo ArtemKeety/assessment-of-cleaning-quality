@@ -1,12 +1,12 @@
 from database import RedisSession
 from .dependecies import LayerDep, UserAgent
-from fastapi import APIRouter, Response, Depends
 from internal.midleware import UserIdenty, user_identy
-from internal.shemas import UserRegister, UserLogin, Session
+from fastapi import APIRouter, Response, Depends, Query
 from configuration import LIFE_TIME, HTTP_ONLY, SECURE_CONNECTION
+from internal.shemas import UserRegister, UserLogin, Session, UserRole
 
 
-router = APIRouter(prefix="/user")
+router = APIRouter(prefix="/api/v1")
 
 
 @router.post("/sign-up", response_model=Session)
@@ -50,10 +50,10 @@ async def sign_in(
 @router.post("/logout")
 async def logout(
         res: Response,
+        user: UserIdenty,
         redis: RedisSession,
-        user_data: UserIdenty
 ):
-    await redis.delete(user_data.get('session'))
+    await redis.delete(user.session)
     res.delete_cookie('session')
     return {"message": "success"}
 
@@ -61,13 +61,18 @@ async def logout(
 @router.delete("/delete", response_model=None, status_code=204)
 async def delete(
         res: Response,
-        redis: RedisSession,
-        user_data: UserIdenty,
+        user: UserIdenty,
         service: LayerDep,
+        redis: RedisSession,
 ):
-    await redis.delete(user_data.get('session'))
+    await redis.delete(user.session)
     res.delete_cookie('session')
-    return await service.User.del_user(user_data.get('user_id'))
+    return await service.User.del_user(user)
+
+
+@router.get("/change-role")
+async def change_role(user: UserIdenty, service: LayerDep, redis: RedisSession, role: UserRole=Query()):
+    return await service.User.add_role(user, role.role, redis)
 
 
 @router.get("/check-auth", dependencies=[Depends(user_identy)], include_in_schema=False)

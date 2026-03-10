@@ -1,11 +1,12 @@
 from fastapi_babel import _
+from typing import Annotated
 from database import RedisSession
-from typing import Annotated, Any
 from secrets import compare_digest
 from .error import CustomHTTPException
 from fastapi import Request, Depends, Response
-from configuration import LIFE_TIME, HTTP_ONLY, SECURE_CONNECTION
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from configuration import LIFE_TIME, HTTP_ONLY, SECURE_CONNECTION, ROLE_TIME
+from internal.domain import Role, UserDomain
 
 
 secure = HTTPBearer(auto_error=False)
@@ -16,7 +17,7 @@ async def user_identy(
         request: Request,
         response: Response,
         credentials: Credentials,
-):
+)-> UserDomain:
     session = request.cookies.get("session")
 
     if not session and credentials and credentials.scheme.lower() == "bearer":
@@ -33,7 +34,10 @@ async def user_identy(
     if not compare_digest(request.headers.get("User-Agent"), data.get("User-Agent")):
         raise CustomHTTPException(status_code=401, detail=_("User-Agent not match"))
 
-    data.update({"session": session})
+    if not (role := await redis.get(f"role:{data["user_id"]}")):
+        role = {"role": Role.default}
+
+    user: UserDomain = UserDomain(session=session, id=data["user_id"],role=Role(role["role"]))
 
     await redis.new_expire(session)
 
@@ -46,11 +50,11 @@ async def user_identy(
         secure=SECURE_CONNECTION,
     )
 
-    request.state.user_id = data.get("user_id")
+    request.state.user_id = user.id
 
-    return data
+    return user
 
-UserIdenty = Annotated[dict[str, Any],  Depends(user_identy)]
+UserIdenty = Annotated[UserDomain,  Depends(user_identy)]
 
 
 

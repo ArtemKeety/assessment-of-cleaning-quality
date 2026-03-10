@@ -1,8 +1,11 @@
 import uuid
 from utils import Password
 from fastapi_babel import _
+from internal.domain import Role
 from database import RedisSession
 from dataclasses import dataclass
+from configuration import ROLE_TIME
+from internal.domain import UserDomain
 from internal.midleware import CustomHTTPException
 from internal.repository import Transaction, IRepository
 from internal.shemas import UserRegister, UserLogin, Session
@@ -46,5 +49,9 @@ class UserService:
         return Session(session=session)
 
 
-    async def del_user(self, user_id : int) -> None:
-        return await self.repository.User.del_user(user_id)
+    async def del_user(self, user: UserDomain) -> None:
+        return await self.repository.User.del_user(user.id)
+
+    @staticmethod
+    async def add_role(user: UserDomain, role: Role, redis: RedisSession):
+        await redis.add(key=f"role:{str(user.id)}", value={"role": role}, exp=ROLE_TIME)

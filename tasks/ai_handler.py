@@ -34,7 +34,7 @@ models = (
 )
 
 
-@CustomRetry(5, 1, requests.RequestException, ConnectionError)
+@CustomRetry(5, 2, requests.RequestException, ConnectionError)
 def create_comment(s: requests.Session, clear: str, dirty: str):
 
     clear_image: str = encoding_file(clear)
@@ -109,7 +109,7 @@ def create_comment(s: requests.Session, clear: str, dirty: str):
 
     if code := data.get('error'):
         if code['code'] != 200:
-            raise Exception(code['message'])
+            raise requests.RequestException(code['message'])
 
     usage = data.get("usage", {})
     comp = usage.get("completion_tokens", 0)

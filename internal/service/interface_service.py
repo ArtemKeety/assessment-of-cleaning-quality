@@ -1,4 +1,6 @@
+from internal.domain import Role
 from database import RedisSession
+from internal.domain import UserDomain
 from fastapi import UploadFile, Request
 from internal.repository import IRepository
 from typing import Protocol, AsyncGenerator, Any
@@ -7,10 +9,10 @@ from internal.shemas import Flat, FullFlat, Report, ReportPath, UserRegister, Se
 
 class IFlatService(Protocol):
 
-    async def add(self, name: str, user_id: int, photos: list[UploadFile]) -> Flat:
+    async def add(self, name: str, user: UserDomain, photos: list[UploadFile]) -> Flat:
         ...
 
-    async def all(self, user_id: int, pages: Pagination) -> list[Flat]:
+    async def all(self, user: UserDomain, pages: Pagination) -> list[Flat]:
         ...
 
     async def get_id(self, flat_id: int) -> list[FullFlat]:
@@ -25,7 +27,7 @@ class IReportService(Protocol):
     async def add(self, flat_id: int, dirty_photos: list[UploadFile]) -> Report:
         ...
 
-    async def get_reports(self, user_id: int, pages: Pagination) -> list[Report]:
+    async def get_reports(self, user: UserDomain, pages: Pagination) -> list[Report]:
         ...
 
     async def get_an_flat(self, flat_id: int, pages: Pagination) -> list[Report]:
@@ -50,9 +52,11 @@ class IUserService(Protocol):
     async def sign_in(self, u: UserLogin, agent: str, redis: RedisSession) -> Session:
         ...
 
-    async def del_user(self, user_id: int) -> None:
+    async def del_user(self, user: UserDomain) -> None:
         ...
 
+    async def add_role(self, user: UserDomain, role: Role, redis: RedisSession):
+        ...
 
 
 class IService(Protocol):
