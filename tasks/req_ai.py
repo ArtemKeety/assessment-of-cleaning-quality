@@ -23,7 +23,7 @@ __path_for_flat = os.path.join(__pathBase, "flat")
     ignore_result=True,
     autoretry_for=(requests.RequestException, ConnectionError, requests.HTTPError)
 )
-def request_from_ai(self, report_id: int , photos: tuple[tuple[str,str], ...]):
+def request_from_ai(self, report_id: int , photos: tuple[tuple[str,str], ...]): # todo Update celery con, init celery con
     LOGGER.info("celery is starting")
 
     self.update_state(
@@ -38,7 +38,7 @@ def request_from_ai(self, report_id: int , photos: tuple[tuple[str,str], ...]):
     session = requests.Session()
 
     with db() as conn:
-        conn.execute("SELECT id FROM report_part WHERE report_id = %s", (report_id, ))
+        conn.execute("SELECT id FROM report_part WHERE report_id = %s", (report_id, )) # todo create
         record = conn.fetchall()
 
         for idx, (dirty_photo, clear_photo) in enumerate(photos):
