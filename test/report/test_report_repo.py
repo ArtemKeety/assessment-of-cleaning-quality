@@ -1,7 +1,7 @@
 import pytest
 from datetime import datetime
 
-from internal.midleware import CustomHTTPException
+from internal.middleware import CustomHTTPException
 from internal.shemas import Report, ReportPath
 from internal.repository.postgres.report import ReportRepo  # <-- поправь путь
 

@@ -8,7 +8,7 @@ from database.async_redis import RedisDb
 from database.async_psql import DataBase
 from fastapi_limiter import FastAPILimiter
 from contextlib import asynccontextmanager
-from internal.midleware import user_address
+from internal.middleware import user_address
 
 
 class LifeSpan:

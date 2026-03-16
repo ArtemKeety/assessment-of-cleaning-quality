@@ -3,7 +3,7 @@ from .dependecies import LayerDep, Photos
 from internal.shemas import Report, ReportPath
 from fastapi.responses import StreamingResponse
 from fastapi import APIRouter, Body, Request, Query, Depends
-from internal.midleware import user_identy, UserIdenty, CustomRateLimit
+from internal.middleware import user_identy, UserIdenty, CustomRateLimit
 
 
 router = APIRouter(prefix="/api/v1")

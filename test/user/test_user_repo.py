@@ -2,7 +2,7 @@ import pytest
 
 from internal.repository.postgres.user import UserRepo  # поправь импорт под свой путь
 from internal.shemas import UserLogin
-from internal.midleware import CustomHTTPException
+from internal.middleware import CustomHTTPException
 
 
 class FakeConn:

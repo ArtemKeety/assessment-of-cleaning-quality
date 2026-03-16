@@ -2,7 +2,7 @@ import asyncpg
 from fastapi_babel import _
 from datetime import datetime
 from dataclasses import dataclass
-from internal.midleware import CustomHTTPException
+from internal.middleware import CustomHTTPException
 from internal.shemas import Report, ReportPath, Pagination
 
 @dataclass(slots=True, frozen=True, init=True)

@@ -6,7 +6,7 @@ from tasks import request_from_ai
 from dataclasses import dataclass
 from fastapi import UploadFile, Request
 from configuration import RAW_REPORT_FILE_PATH
-from internal.midleware import CustomHTTPException
+from internal.middleware import CustomHTTPException
 from internal.repository import Transaction, IRepository
 from internal.shemas import Report, ReportPath, Pagination
 from utils import download_files, TaskCondition, get_status

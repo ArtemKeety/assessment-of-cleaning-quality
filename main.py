@@ -5,13 +5,12 @@ from fastapi import FastAPI
 from granian import Granian
 from internal.router import *
 from customlogger import LOGGER
-from internal.midleware import *
+from internal.middleware import *
 from internal.lifespan import LifeSpan
 from granian.constants import Interfaces
 from fastapi.staticfiles import StaticFiles
 from fastapi_limiter.depends import RateLimiter
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.exceptions import RequestValidationError
 from fastapi_babel import Babel, BabelConfigs, BabelMiddleware
 from configuration import TIMEOUT, FLAT_FILE_PATH, REPORT_FILE_PATH, RAW_REPORT_FILE_PATH, WORKERS
@@ -63,20 +62,13 @@ app.add_exception_handler(CustomHTTPException, ErrorHandler.CustomHTTPException)
 app.add_exception_handler(asyncpg.UniqueViolationError, ErrorHandler.UniqueViolationError)
 app.add_exception_handler(RequestValidationError, ErrorHandler.PydenticValidationError)
 
-
+app.include_router(swagger_router)
 app.include_router(user_router, prefix="/user", tags=["user"])
 app.include_router(flat_router, prefix="/flat", tags=["flat"])
 app.include_router(report_router, prefix="/report", tags=["report"])
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-@app.get('/docs', include_in_schema=False, dependencies=[Depends(swagger_auth)])
-async def docs():
-    return get_swagger_ui_html(openapi_url="/openapi.json", title=app.title)
-
-@app.get('/openapi.json', include_in_schema=False, dependencies=[Depends(swagger_auth)])
-async def openapi():
-    return app.openapi()
 
 
 if __name__ == '__main__':

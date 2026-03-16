@@ -1,7 +1,7 @@
 from database import RedisSession
 from .dependecies import LayerDep, UserAgent
 from fastapi import APIRouter, Response, Depends
-from internal.midleware import UserIdenty, user_identy
+from internal.middleware import UserIdenty, user_identy
 from internal.shemas import UserRegister, UserLogin, Session
 from configuration import LIFE_TIME, HTTP_ONLY, SECURE_CONNECTION
 

@@ -1,6 +1,6 @@
 import pytest
 from fastapi import FastAPI
-from internal.midleware import get_header_data, user_identy
+from internal.middleware import get_header_data, user_identy
 from database import RedisDb, DataBase
 
 

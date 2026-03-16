@@ -4,7 +4,7 @@ from .timeout import TimeoutMiddleware
 from .auth import user_identy, UserIdenty
 from .header import get_header_data, user_address
 from .files import ValidateFiles
-from .swagger import swagger_auth
+from .swagger import SwaggerAuth
 from .custom_ratelimit import CustomRateLimit
 
 
@@ -16,7 +16,7 @@ __all__ = (
     'LogMiddleware',
     'TimeoutMiddleware',
     'user_address',
-    'swagger_auth',
+    'SwaggerAuth',
     'user_identy',
     'ValidateFiles',
     'CustomRateLimit',

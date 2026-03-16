@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from httpx import AsyncClient, ASGITransport
 
 from database import DataBase
-from internal.midleware import user_identy
+from internal.middleware import user_identy
 from internal.service import ReportService
 from internal.shemas import Report, ReportPath
 

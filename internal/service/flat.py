@@ -4,7 +4,7 @@ from fastapi import UploadFile
 from utils import download_files
 from dataclasses import dataclass
 from utils.isolation_lvl import IsolationLvl
-from internal.midleware import CustomHTTPException
+from internal.middleware import CustomHTTPException
 from configuration import FLAT_FILE_PATH, MAX_COUNT
 from internal.shemas import Flat, FullFlat, Pagination
 from internal.repository import Transaction, IRepository

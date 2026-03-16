@@ -5,7 +5,7 @@ from httpx import AsyncClient, ASGITransport
 import asyncpg
 
 from database import DataBase
-from internal.midleware import user_identy
+from internal.middleware import user_identy
 from internal.service import FlatService
 from internal.shemas import Flat, FullFlat
 

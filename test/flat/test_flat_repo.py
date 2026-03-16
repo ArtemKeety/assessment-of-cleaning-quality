@@ -1,6 +1,6 @@
 import pytest
 
-from internal.midleware import CustomHTTPException
+from internal.middleware import CustomHTTPException
 from internal.shemas import Flat, FullFlat
 
 from internal.repository.postgres.flat import FlatRepo  # <-- поправь путь (пример)

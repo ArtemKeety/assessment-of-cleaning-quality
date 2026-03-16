@@ -4,7 +4,7 @@ from database import PostgresSession
 from fastapi import Depends, UploadFile
 from internal.service import Service, IService
 from internal.repository import Repository, IRepository
-from internal.midleware import ValidateFiles, get_header_data
+from internal.middleware import ValidateFiles, get_header_data
 
 
 async def layer(session: PostgresSession) -> IService:

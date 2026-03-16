@@ -1,7 +1,7 @@
 from .dependecies import LayerDep, Photos
 from fastapi import APIRouter, Body, Query, Depends
 from internal.shemas import Flat, FullFlat, Pagination
-from internal.midleware import user_identy, UserIdenty, CustomRateLimit
+from internal.middleware import user_identy, UserIdenty, CustomRateLimit
 
 
 router = APIRouter(prefix="/api/v1")
